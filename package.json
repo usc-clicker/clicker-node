@@ -1,0 +1,24 @@
+{
+  "name": "clicker-node",
+  "version": "1.0.0",
+  "description": "Node app for USC clicker",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.13.3",
+    "parse": "^1.6.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/usc-clicker/clicker-node.git"
+  },
+  "author": "David Carr",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/usc-clicker/clicker-node/issues"
+  },
+  "homepage": "https://github.com/usc-clicker/clicker-node#readme"
+}
