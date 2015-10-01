@@ -6,6 +6,14 @@
  */
 
 module.exports = {
-	
+	ask: function (req, res) {
+		Question.ask(null, function(error) {
+			if (error) {
+				res.status(400).send(error);
+			} else {
+				return res.send("Push Sent");
+			}
+		});
+  	},
 };
 
