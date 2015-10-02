@@ -33,7 +33,7 @@ module.exports = {
         type: 'numeric',
         answer: 1880,
         start_time: Date.now(),
-        time_limit: 5000
+        time_limit: 15000
       };
     } else if (id == 1) {
       payload = {
@@ -41,7 +41,7 @@ module.exports = {
         type: 'free-response',
         answer: 'Max Nikias',
         start_time: Date.now(),
-        time_limit: 5000
+        time_limit: 15000
       }
     } else if (id == 2) {
       payload = {
@@ -50,7 +50,7 @@ module.exports = {
           choices: ['Max Browne', 'Cody Kessler', 'Mark Sanchez', 'Marcus Mariota', 'Matt Barkley'],
           answer: 'Cody Kessler',
           start_time: Date.now(),
-          time_limit: 5000
+          time_limit: 15000
       }
     } else {
       return cb("Question not found");
