@@ -20,27 +20,52 @@ module.exports = {
       type: 'string'
     },
 
-    // answers: {
-    //   collection: 'string'
-    // }
-
   },
 
 
-  ask: function (options, cb) {
+  ask: function (id, cb) {
+
+    var payload;
+
+    if (id == 0) {
+      payload = {
+        question: 'What year was USC founded?',
+        type: 'numeric',
+        answer: 1880,
+        start_time: Date.now(),
+        time_limit: 5000
+      };
+    } else if (id == 1) {
+      payload = {
+        question: 'Who is the current President of USC?',
+        type: 'free-response',
+        answer: 'Max Nikias',
+        start_time: Date.now(),
+        time_limit: 5000
+      }
+    } else if (id == 2) {
+      payload = {
+          question: 'Who is USC’s starting quarterback?',
+          type: 'multiple-choice',
+          choices: ['Max Browne', 'Cody Kessler', 'Mark Sanchez', 'Marcus Mariota', 'Matt Barkley'],
+          answer: 'Cody Kessler',
+          start_time: Date.now(),
+          time_limit: 5000
+      }
+    } else {
+      return cb("Question not found");
+    }
 
   	Parse.Push.send({
   	  channels: [ "Students" ],
-  	  data: {
-  	    alert: "This is a question sent from the Node app"
-  	  }
+  	  data: payload
   	}, {
   	  success: function() {
-  	    cb();
+  	    return cb();
   	  },
   	  error: function(error) {
   	  	console.log("error: Parse.Push.send code: " + error.code + " msg: " + error.message);
-  	    cb(error);
+  	    return cb(error);
   	  }
   	});
   }
