@@ -67,6 +67,29 @@ Base url: `http://fontify.usc.edu`
     </tbody>
 </table>
 
+`GET /user/`
+
+#####Parameters
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Required?</th>
+            <th width="50">Type</th>
+            <th width=100%>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>id</code></td>
+            <td>optional</td>
+            <td>integer</td>
+            <td>ID of user; omitting this will return all users</td>
+        </tr>
+    </tbody>
+</table>
+
 ###Question
 
 `POST /question/ask`
@@ -88,6 +111,29 @@ Base url: `http://fontify.usc.edu`
             <td>yes</td>
             <td>integer</td>
             <td>Question ID</td>
+        </tr>
+    </tbody>
+</table>
+
+###Class
+
+`GET /class`
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Required?</th>
+            <th width="50">Type</th>
+            <th width=100%>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>id</code></td>
+            <td>optional</td>
+            <td>integer</td>
+            <td>ID of class; omitting this will return all classes</td>
         </tr>
     </tbody>
 </table>
