@@ -11,7 +11,7 @@ Start the app with `sails lift` or `node app.js`
 
 Base url: `http://fontify.usc.edu`
 
-###AUTH
+###Auth
 
 `POST /auth/login`
 
@@ -91,5 +91,3 @@ Base url: `http://fontify.usc.edu`
         </tr>
     </tbody>
 </table>
-
-###Auth
