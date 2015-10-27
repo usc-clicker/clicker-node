@@ -27,7 +27,7 @@ module.exports = {
     },
 
     sections: {
-      collection: 'string'
+      type: 'array'
     }
 
   },
@@ -78,7 +78,7 @@ module.exports = {
         cb(err);
       } else {
         console.log('Created Section with id ' + createdSection.section_id);
-        createdClass.sections.add(createdSection.section_id);
+        createdClass.sections.push_back(createdSection.section_id);
         createdClass.save();
       }
     });

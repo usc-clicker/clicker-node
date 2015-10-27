@@ -11,7 +11,7 @@ module.exports = {
   attributes: require('waterlock').models.user.attributes({
     
     enrolledIn: {
-      collection: 'string'
+      type: 'array'
     }
     
   }),
@@ -24,7 +24,7 @@ module.exports = {
     User.findOne(options.id).exec(function (err, theUser) {
       if (err) return cb(err);
       if (!theUser) return cb(new Error('User not found.'));
-      theUser.enrolledIn.add(options.courses);
+      theUser.enrolledIn.push_back(options.courses);
       theUser.save(cb);
     });
   }
