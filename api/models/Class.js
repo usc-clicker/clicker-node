@@ -36,7 +36,7 @@ module.exports = {
     return false;
   },
 
-  createClassWithSections: function(department, course) {
+  createClassWithSections: function(department, course, cb) {
     if (!Class.exists(course.PublishedCourseID)) {
 
       Class.create({
@@ -48,10 +48,10 @@ module.exports = {
 
         if (Array.isArray(course.CourseData.SectionData)) {
           course.CourseData.SectionData.forEach(function(section) {
-            Class.createAndAddSection(createdClass, section);
+            Class.createAndAddSection(createdClass, section, cb);
           });
         } else if (course.CourseData.SectionData) {
-          Class.createAndAddSection(createdClass, course.CourseData.SectionData);
+          Class.createAndAddSection(createdClass, course.CourseData.SectionData, cb);
         }
 
       });
@@ -59,7 +59,7 @@ module.exports = {
     }
   },
 
-  createAndAddSection: function(createdClass, section) {
+  createAndAddSection: function(createdClass, section, cb) {
     var instructorName;
     if (Array.isArray(section.instructor)) {
       instructorName = section.instructor[0].first_name + section.instructor[1].last_name;
@@ -110,10 +110,10 @@ module.exports = {
 
                 if (Array.isArray(deptResponse.OfferedCourses.course)) {
                   deptResponse.OfferedCourses.course.forEach(function(course) {
-                    Class.createClassWithSections(deptResponse.Dept_Info.department, course);
+                    Class.createClassWithSections(deptResponse.Dept_Info.department, course, cb);
                   });
                 } else if (deptResponse.OfferedCourses.course) {
-                  Class.createClassWithSections(deptResponse.Dept_Info.department, deptResponse.OfferedCourses.course);
+                  Class.createClassWithSections(deptResponse.Dept_Info.department, deptResponse.OfferedCourses.course, cb);
                 }
 
               } else {
