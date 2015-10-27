@@ -13,15 +13,20 @@ module.exports = {
   attributes: {
 
   	title: {
-      type: 'string'
+      type: 'string',
+      required: true
     },
 
     question: {
-      type: 'string'
+      type: 'string',
+      required: true
     },
 
   },
 
+  answer: function(id, location, user, cb) {
+
+  },
 
   ask: function (id, cb) {
 
