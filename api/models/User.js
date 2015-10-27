@@ -11,7 +11,7 @@ module.exports = {
   attributes: require('waterlock').models.user.attributes({
     
     enrolledIn: {
-      collection: 'Class'
+      collection: 'string'
     }
     
   }),
