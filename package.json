@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Node app for USC clicker",
   "dependencies": {
+    "async": "^1.5.0",
     "ejs": "~0.8.4",
     "grunt": "0.4.2",
     "grunt-contrib-clean": "~0.5.0",

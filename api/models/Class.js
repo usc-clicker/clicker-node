@@ -6,6 +6,7 @@
 */
 
 var request = require('request');
+var async = require('async');
 
 module.exports = {
 
@@ -76,7 +77,8 @@ module.exports = {
       end_time: section.end_time
     }).exec(function createCB(err, createdSection) {
       if (err) {
-        cb(err);
+        console.log('Error creating section');
+        console.log(err.message);
       } else {
         console.log('Created Section with id ' + createdSection.section_id);
         createdClass.sections.push(createdSection.section_id);
@@ -92,7 +94,8 @@ module.exports = {
     request(url, function (error, response, body) {
       if (!error && response.statusCode == 200) {
         var response = JSON.parse(body);
-        response.department.forEach(function(school) {
+
+        async.eachSeries(response.department, function iterator(school, schoolCallback) {
           var deptCodes = [];
 
           if (Array.isArray(school.department)) {
@@ -103,8 +106,10 @@ module.exports = {
             deptCodes.push(school.department.code);
           }
 
-          deptCodes.forEach(function(deptCode) {
+          async.eachSeries(deptCodes, function iterator(deptCode, deptCallback) {
             var url = "http://web-app.usc.edu/web/soc/api/classes/" + deptCode + "/" + term;
+            console.log("async iteration for: " + deptCode);
+
             request(url, function(deptError, deptResponse, deptBody) {
               if (!deptError && deptResponse.statusCode == 200) {
                 var deptResponse = JSON.parse(deptBody);
@@ -116,11 +121,17 @@ module.exports = {
                 } else if (deptResponse.OfferedCourses.course) {
                   Class.createClassWithSections(deptResponse.Dept_Info.department, deptResponse.OfferedCourses.course, cb);
                 }
+                deptCallback(null);
 
               } else {
-                cb(deptError);
+                deptCallback(deptError);
               }
+
             });
+
+          }, function done() {
+            console.log("Import complete for all depts in school");
+            schoolCallback(null);
           });
           
         })
