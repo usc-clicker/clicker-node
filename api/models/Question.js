@@ -100,7 +100,6 @@ module.exports = {
       if (questionErr) {
         cb(questionErr);
       } else if (foundQuestion) {
-        if (questionPayload) {
           Parse.Push.send({
             channels: [ "Students" ],
             data: questionPayload.toJSON()
@@ -113,9 +112,8 @@ module.exports = {
               return cb(error);
             }
           });
-        } else {
-          cb("Question not found");
-        }
+      } else {
+        cb("Question not found");
       }
     });
 
