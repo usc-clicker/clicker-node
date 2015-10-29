@@ -11,12 +11,14 @@
 module.exports = require('waterlock').actions.user({
   
 	stats: function(req,res) {
-		if (req.body.user) {
-			User.stats(req.body.user, function(error) {
+		if (req.query.user) {
+			User.stats(req.query.user, function(error, results) {
 				if (error) {
 					return res.status(400).send(error);
 				} else {
-					return res.send("Error getting user stats");
+					console.log("results");
+					console.log(results);
+					return res.send(results);
 				}
 			});
 		} else {

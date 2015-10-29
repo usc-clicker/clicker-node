@@ -6,6 +6,8 @@
  * @docs        :: http://waterlock.ninja/documentation
  */
 
+var async = require('async');
+
 module.exports = {
 
   attributes: require('waterlock').models.user.attributes({
@@ -38,29 +40,45 @@ module.exports = {
   stats: function (user_email, cb) {
     Auth.findOne({email: user_email}).exec(function findCB(authErr, foundAuth) {
       if (authErr) {
-        cb(authErr);
+        cb(authErr, null);
       } else {
-        var quizScores = [];
-        foundAuth.user.answerSets.forEach(function(answer_set_id) {
-          AnswerSet.findOne({id: answer_set_id}).exec(function findCB(answerSetErr, foundAnswerSet) {
-            if (foundAnswerSet) {
-              Quiz.findOne({id: foundAnswerSet.quiz_id}).exec(function findCB(quizErr, foundQuiz) {
-                if (foundQuiz) {
-                  var quizResult = {};
-                  quizResult.quiz_name = foundQuiz.quiz_name;
-                  var numCorrect = 0.0;
-                  foundAnswerSet.answer_validity.forEach(function(valid) {
-                    if (valid)
-                      numCorrect++;
+        User.findOne({id: foundAuth.id}).exec(function findCB(userErr, foundUser) {
+          if (userErr) {
+            cb(userErr, null);
+          } else {
+            var quizScores = [];
+
+            async.each(foundUser.answerSets, function iterator(answer_set_id, answerSetCallback) {
+              AnswerSet.findOne({id: answer_set_id}).exec(function findCB(answerSetErr, foundAnswerSet) {
+                if (foundAnswerSet) {
+                  Quiz.findOne({id: foundAnswerSet.quiz_id}).exec(function findCB(quizErr, foundQuiz) {
+                    if (foundQuiz) {
+                      var quizResult = {};
+                      quizResult.quiz_name = foundQuiz.quiz_name;
+                      var numCorrect = 0.0;
+                      foundAnswerSet.answer_validity.forEach(function(valid) {
+                        if (valid)
+                          numCorrect++;
+                      });
+                      var score = numCorrect / foundAnswerSet.answer_validity.length;
+                      quizResult.score = score * 100;
+                      console.log("quizResult");
+                      console.log(quizResult);
+                      quizScores.push(quizResult);
+                      answerSetCallback();
+                    }
                   });
-                  quizResult.score = numCorrect / foundAnswerSet.answer_validity.length;
-                  quizScores.push(quizResult);;
+                } else {
+                  answerSetCallback();
                 }
               });
-            }
-          });
+            }, function done(err) {
+              console.log("quizScores");
+              console.log(quizScores);
+              cb(null, quizScores);
+            });
+          } 
         });
-        cb(quizScores);
       }
     });
   }
