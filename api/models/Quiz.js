@@ -42,6 +42,9 @@ module.exports = {
 		  		}
 		  		else {
 		  			quizFound.questionSet.push(question_id);
+		  			quizFound.save(function(err,s) {
+		  				console.log("Added new question id " + question_id);
+		  			});
 		  			cb();
 		  		}
 			});

@@ -40,19 +40,19 @@ module.exports = {
   },
 
   answer: function(quiz_id, question_id, answer, location, user_email, cb) {
-    Question.find({id: question_id}).exec(function findCB(questionErr, foundQuestion) {
+    Question.findOne({id: question_id}).exec(function findCB(questionErr, foundQuestion) {
       if (questionErr) {
         cb(questionErr, null);
       } else {
         var correct = (answer == foundQuestion.answer);
-        console.log("Correct? : " + question);
+        console.log("Correct? : " + correct);
 
-        Auth.find({email: user_email}).exec(function findCB(userErr, foundUser) {
-          if (userErr) {
-            cb(userErr, null);
+        Auth.findOne({email: user_email}).exec(function findCB(authErr, foundAuth) {
+          if (authErr) {
+            cb(authErr, null);
           } else {
 
-            AnswerSet.find({quiz_id: quiz_id, user: foundUser.id}).exec(function findCB(answersetErr, foundAnswerSet) {
+            AnswerSet.findOne({quiz_id: quiz_id, user: foundAuth.id}).exec(function findCB(answersetErr, foundAnswerSet) {
               if (foundAnswerSet) {
                 //Update answer set
                 foundAnswerSet.question_ids.push(question_id);
@@ -63,16 +63,28 @@ module.exports = {
                 //Create answer set
                 AnswerSet.create({
                   quiz_id: quiz_id,
-                  user_id: foundUser.id
+                  user_id: foundAuth.id
                 }).exec(function createCB(createAnswerSetErr, createdAnswerSet) {
-                  //Callback with correct answer
-                  createdAnswerSet.question_ids.push(question_id);
-                  createdAnswerSet.answer_validity.push(correct);
-                  createdAnswerSet.save();
-                  cb(null, correct);
-                  //Save this answer set ID to the User model for future reference
-                  foundUser.answerSets.push(createdAnswerSet.id);
-                  foundUser.save();
+                  if (createAnswerSetErr) {
+                    cb(createAnswerSetErr, null);
+                  } else {
+                    //Callback with correct answer
+                    createdAnswerSet.question_ids.push(question_id);
+                    createdAnswerSet.answer_validity.push(correct);
+                    createdAnswerSet.save();
+                    cb(null, correct);
+                    //Save this answer set ID to the User model for future reference
+                    User.findOne({id: foundAuth.id}).exec(function findCB(userErr, foundUser) {
+                      if (userErr) {
+                        cb (userErr, null);
+                      } else {
+                        console.log("foundUser");
+                        console.log(foundUser);
+                        foundUser.answerSets.push(createdAnswerSet.id);
+                        foundUser.save();
+                      }
+                    });                    
+                  }
                 });
               }
             });
@@ -85,11 +97,10 @@ module.exports = {
 
   ask: function (id, cb) {
 
-    Question.find({id: id}).exec(function findCB(questionErr, foundQuestion) {
+    Question.findOne({id: id}).exec(function findCB(questionErr, foundQuestion) {
       if (questionErr) {
         cb(questionErr);
-      } else {
-        var questionPayload = foundQuestion.pop();
+      } else if (foundQuestion) {
         if (questionPayload) {
           Parse.Push.send({
             channels: [ "Students" ],
