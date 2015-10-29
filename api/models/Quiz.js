@@ -41,7 +41,7 @@ module.exports = {
 		  			cb("Could not find quiz");
 		  		}
 		  		else {
-		  			quizFound.questionSet.push(question_id);
+		  			quizFound.questionSet = [question_id];
 		  			cb();
 		  		}
 			});
