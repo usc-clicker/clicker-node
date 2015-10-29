@@ -73,16 +73,14 @@ module.exports = {
                     createdAnswerSet.save();
                     cb(null, correct);
                     //Save this answer set ID to the User model for future reference
-                    // User.findOne({id: foundAuth.id}).exec(function findCB(userErr, foundUser) {
-                    //   if (userErr) {
-                    //     cb (userErr, null);
-                    //   } else {
-                    //     foundUser.answerSets.push(createdAnswerSet.id);
-                    //     foundUser.save();
-                    //   }
-                    // });   
-                    foundAuth.user.answerSets.push(createdAnswerSet.id);
-                    foundAuth.user.save();         
+                    User.findOne({id: foundAuth.user.id}).exec(function findCB(userErr, foundUser) {
+                      if (userErr) {
+                        cb (userErr, null);
+                      } else {
+                        foundUser.answerSets.push(createdAnswerSet.id);
+                        foundUser.save();
+                      }
+                    });   
                   }
                 });
               }
