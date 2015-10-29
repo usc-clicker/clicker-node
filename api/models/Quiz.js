@@ -41,7 +41,10 @@ module.exports = {
 		  			cb("Could not find quiz");
 		  		}
 		  		else {
-		  			quizFound.questionSet = [question_id];
+		  			quizFound.questionSet.push(question_id);
+		  			quizFound.save(function(err,s) {
+		  				console.log("Added new question id " + question_id);
+		  			});
 		  			cb();
 		  		}
 			});
