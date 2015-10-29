@@ -137,3 +137,26 @@ Base url: `http://fontify.usc.edu`
         </tr>
     </tbody>
 </table>
+
+###Section
+
+`GET /section`
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Required?</th>
+            <th width="50">Type</th>
+            <th width=100%>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>id</code></td>
+            <td>optional</td>
+            <td>integer</td>
+            <td>ID of session; omitting this will return all classes.  Please note that we are using session IDs as Parse Channels.</td>
+        </tr>
+    </tbody>
+</table>
