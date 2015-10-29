@@ -77,6 +77,7 @@ module.exports = {
                       if (userErr) {
                         cb (userErr, null);
                       } else {
+                        console.log(foundUser);
                         foundUser.answerSets.push(createdAnswerSet.id);
                         foundUser.save();
                       }
