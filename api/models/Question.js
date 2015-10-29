@@ -12,15 +12,30 @@ module.exports = {
 
   attributes: {
 
-  	title: {
-      type: 'string',
-      required: true
-    },
-
     question: {
       type: 'string',
       required: true
     },
+
+    answer: {
+      type: 'string',
+      required: true
+    },
+
+    choices: {
+      type: 'array',
+      required: true
+    },
+
+    time_limit: {
+      type: 'integer',
+      required: true
+    },
+
+    type: {
+      type: 'string',
+      required: true
+    }
 
   },
 
