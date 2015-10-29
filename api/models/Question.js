@@ -102,7 +102,7 @@ module.exports = {
       } else if (foundQuestion) {
           Parse.Push.send({
             channels: [ "Students" ],
-            data: questionPayload.toJSON()
+            data: foundQuestion.toJSON()
           }, {
             success: function() {
               return cb();
