@@ -86,9 +86,9 @@ module.exports = {
   ask: function (id, cb) {
 
     Question.find({id: id}).exec(function findCB(questionErr, foundQuestion) {
-      if (questionErr) {
+      if (questionErr || !foundQuestion) {
         cb(questionErr);
-      } else {
+      } else if (foundQuestion) {
         Parse.Push.send({
           channels: [ "Students" ],
           data: foundQuestion.pop().toJSON()
