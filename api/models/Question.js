@@ -45,14 +45,13 @@ module.exports = {
         cb(questionErr, null);
       } else {
         var correct = (answer == foundQuestion.answer);
-        console.log("Correct? : " + correct);
 
         Auth.findOne({email: user_email}).exec(function findCB(authErr, foundAuth) {
           if (authErr) {
             cb(authErr, null);
           } else {
 
-            AnswerSet.findOne({quiz_id: quiz_id, user: foundAuth.id}).exec(function findCB(answersetErr, foundAnswerSet) {
+            AnswerSet.findOne({quiz_id: quiz_id, user: foundAuth.user.id}).exec(function findCB(answersetErr, foundAnswerSet) {
               if (foundAnswerSet) {
                 //Update answer set
                 foundAnswerSet.question_ids.push(question_id);
@@ -74,16 +73,16 @@ module.exports = {
                     createdAnswerSet.save();
                     cb(null, correct);
                     //Save this answer set ID to the User model for future reference
-                    User.findOne({id: foundAuth.id}).exec(function findCB(userErr, foundUser) {
-                      if (userErr) {
-                        cb (userErr, null);
-                      } else {
-                        console.log("foundUser");
-                        console.log(foundUser);
-                        foundUser.answerSets.push(createdAnswerSet.id);
-                        foundUser.save();
-                      }
-                    });                    
+                    // User.findOne({id: foundAuth.id}).exec(function findCB(userErr, foundUser) {
+                    //   if (userErr) {
+                    //     cb (userErr, null);
+                    //   } else {
+                    //     foundUser.answerSets.push(createdAnswerSet.id);
+                    //     foundUser.save();
+                    //   }
+                    // });   
+                    foundAuth.user.answerSets.push(createdAnswerSet.id);
+                    foundAuth.user.save();         
                   }
                 });
               }

@@ -33,6 +33,36 @@ module.exports = {
       theUser.enrolledIn.push(options.courses);
       theUser.save(cb);
     });
+  },
+
+  stats: function (user_email, cb) {
+    Auth.findOne({email: user_email}).exec(function findCB(authErr, foundAuth) {
+      if (authErr) {
+        cb(authErr);
+      } else {
+        var quizScores = [];
+        foundAuth.user.answerSets.forEach(function(answer_set_id) {
+          AnswerSet.findOne({id: answer_set_id}).exec(function findCB(answerSetErr, foundAnswerSet) {
+            if (foundAnswerSet) {
+              Quiz.findOne({id: foundAnswerSet.quiz_id}).exec(function findCB(quizErr, foundQuiz) {
+                if (foundQuiz) {
+                  var quizResult = {};
+                  quizResult.quiz_name = foundQuiz.quiz_name;
+                  var numCorrect = 0.0;
+                  foundAnswerSet.answer_validity.forEach(function(valid) {
+                    if (valid)
+                      numCorrect++;
+                  });
+                  quizResult.score = numCorrect / foundAnswerSet.answer_validity.length;
+                  quizScores.push(quizResult);;
+                }
+              });
+            }
+          });
+        });
+        cb(quizScores);
+      }
+    });
   }
 
 };
