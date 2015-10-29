@@ -8,10 +8,11 @@
 module.exports = {
 
   attributes: {
-  	quiz_id: {
+  	quiz_name: {
   	  type: 'string',
   	  required: true
   	},
+    
   	questionSet: {
   		type: 'array',
   		defaultsTo: []
