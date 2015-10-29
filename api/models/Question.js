@@ -66,8 +66,9 @@ module.exports = {
                   user_id: foundUser.id
                 }).exec(function createCB(createAnswerSetErr, createdAnswerSet) {
                   //Callback with correct answer
-                  question_ids.push(question_id);
-                  answer_validity.push(correct);
+                  createdAnswerSet.question_ids.push(question_id);
+                  createdAnswerSet.answer_validity.push(correct);
+                  createdAnswerSet.save();
                   cb(null, correct);
                   //Save this answer set ID to the User model for future reference
                   foundUser.answerSets.push(createdAnswerSet.id);
