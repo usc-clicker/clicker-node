@@ -50,8 +50,8 @@ module.exports = {
           if (authErr) {
             cb(authErr, null);
           } else {
-
-            AnswerSet.findOne({quiz_id: quiz_id, user: foundAuth.user.id}).exec(function findCB(answersetErr, foundAnswerSet) {
+            console.log(foundAuth.id)
+            AnswerSet.findOne({quiz_id: quiz_id, user: foundAuth.id}).exec(function findCB(answersetErr, foundAnswerSet) {
               if (foundAnswerSet) {
                 //Update answer set
                 foundAnswerSet.question_ids.push(question_id);
@@ -73,7 +73,7 @@ module.exports = {
                     createdAnswerSet.save();
                     cb(null, correct);
                     //Save this answer set ID to the User model for future reference
-                    User.findOne({id: foundAuth.user.id}).exec(function findCB(userErr, foundUser) {
+                    User.findOne({id: foundAuth.id}).exec(function findCB(userErr, foundUser) {
                       if (userErr) {
                         cb (userErr, null);
                       } else {
