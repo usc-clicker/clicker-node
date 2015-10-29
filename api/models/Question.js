@@ -86,21 +86,26 @@ module.exports = {
   ask: function (id, cb) {
 
     Question.find({id: id}).exec(function findCB(questionErr, foundQuestion) {
-      if (questionErr || !foundQuestion) {
+      if (questionErr) {
         cb(questionErr);
-      } else if (foundQuestion) {
-        Parse.Push.send({
-          channels: [ "Students" ],
-          data: foundQuestion.pop().toJSON()
-        }, {
-          success: function() {
-            return cb();
-          },
-          error: function(error) {
-            console.log("error: Parse.Push.send code: " + error.code + " msg: " + error.message);
-            return cb(error);
-          }
-        });
+      } else {
+        var questionPayload = foundQuestion.pop();
+        if (questionPayload) {
+          Parse.Push.send({
+            channels: [ "Students" ],
+            data: questionPayload.toJSON()
+          }, {
+            success: function() {
+              return cb();
+            },
+            error: function(error) {
+              console.log("error: Parse.Push.send code: " + error.code + " msg: " + error.message);
+              return cb(error);
+            }
+          });
+        } else {
+          cb("Question not found");
+        }
       }
     });
 
