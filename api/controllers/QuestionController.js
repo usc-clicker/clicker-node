@@ -21,12 +21,14 @@ module.exports = {
   	},
 
   	answer: function (req, res) {
-  		if (req.body.id && req.body.location && req.body.user) {
-  			Question.answer(req.body.id, req.body.location, req.body.user, function(error) {
+  		if (req.body.quiz_id && req.body.question_id && req.body.answer && req.body.location && req.body.user) {
+  			Question.answer(req.body.quiz_id, req.body.question_id, req.body.answer, req.body.location, req.body.user, function(error, correct) {
   				if (error) {
 					return res.status(400).send(error);
 				} else {
-					return res.send("Response Submitted");
+					return res.send({
+						correct: correct
+					});
 				}
   			});
   		} else {

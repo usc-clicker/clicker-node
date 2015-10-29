@@ -13,6 +13,11 @@ module.exports = {
     enrolledIn: {
       type: 'array',
       defaultsTo: []
+    },
+
+    answerSets: {
+      type: 'array',
+      defaultsTo: []
     }
     
   }),

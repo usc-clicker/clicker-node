@@ -39,8 +39,47 @@ module.exports = {
 
   },
 
-  answer: function(id, location, user, cb) {
+  answer: function(quiz_id, question_id, answer, location, user_email, cb) {
+    Question.find({id: question_id}).exec(function findCB(questionErr, foundQuestion) {
+      if (questionErr) {
+        cb(questionErr, null);
+      } else {
+        var correct = (answer == foundQuestion.answer);
+        console.log("Correct? : " + question);
 
+        Auth.find({email: user_email}).exec(function findCB(userErr, foundUser) {
+          if (userErr) {
+            cb(err, null);
+          } else {
+
+            AnswerSet.find({quiz_id: quiz_id, user: foundUser.id}).exec(function findCB(answersetErr, foundAnswerSet) {
+              if (foundAnswerSet) {
+                //Update answer set
+                foundAnswerSet.question_ids.push(question_id);
+                foundAnswerSet.answer_validity.push(correct);
+                foundAnswerSet.save();
+                cb(null, correct);
+              } else {
+                //Create answer set
+                AnswerSet.create({
+                  quiz_id: quiz_id,
+                  user_id: foundUser.id
+                }).exec(function createCB(createAnswerSetErr, createdAnswerSet) {
+                  //Callback with correct answer
+                  question_ids.push(question_id);
+                  answer_validity.push(correct);
+                  cb(null, correct);
+                  //Save this answer set ID to the User model for future reference
+                  foundUser.answerSets.push(createdAnswerSet.id);
+                  foundUser.save();
+                });
+              }
+            });
+
+          }
+        });
+      }
+    });    
   },
 
   ask: function (id, cb) {
