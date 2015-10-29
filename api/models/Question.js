@@ -49,7 +49,7 @@ module.exports = {
 
         Auth.find({email: user_email}).exec(function findCB(userErr, foundUser) {
           if (userErr) {
-            cb(err, null);
+            cb(userErr, null);
           } else {
 
             AnswerSet.find({quiz_id: quiz_id, user: foundUser.id}).exec(function findCB(answersetErr, foundAnswerSet) {
