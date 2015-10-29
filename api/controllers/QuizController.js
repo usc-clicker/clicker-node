@@ -8,7 +8,17 @@
 module.exports = {
 
 	add: function(req,res) {
-		res.send("ADD");
+		if (req.body.quiz_id, req.body.question_id) {
+			Quiz.add(req.body.quiz_id, req.body.question_id, function(error) {
+				if (error) {
+					return res.status(400).send(error);
+				} else {
+					return res.send("Push Sent");
+				}
+			});
+		} else {
+			return res.status(400).send("Invalid request");
+		}
 	}
 };
 
