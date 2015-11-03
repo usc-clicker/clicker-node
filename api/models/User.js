@@ -27,13 +27,48 @@ module.exports = {
   beforeCreate: require('waterlock').models.user.beforeCreate,
   beforeUpdate: require('waterlock').models.user.beforeUpdate,
 
-  enroll: function (options, cb) {
+  enroll: function (user_email, section_id, cb) {
 
-    User.findOne(options.id).exec(function (err, theUser) {
-      if (err) return cb(err);
-      if (!theUser) return cb(new Error('User not found.'));
-      theUser.enrolledIn.push(options.courses);
-      theUser.save(cb);
+    Auth.findOne({email: user_email}).exec(function findCB(authErr, foundAuth) {
+      if (authErr) {
+        cb(authErr, null);
+      } else {
+        User.findOne({id: foundAuth.id}).exec(function findCB(userErr, foundUser) {
+          if (userErr) {
+            cb(userErr, null);
+          } else {
+            Section.findOne({section_id: section_id}).exec(function findCB(sectionErr, foundSection) {
+              foundSection.students.push(foundUser.id);
+              foundSection.save();
+              foundUser.enrolledIn.push(section_id);
+              foundUser.save()
+              cb();
+            });
+          }
+        });
+      }
+    });
+  },
+
+  classes: function(user_email, cb) {
+    Auth.findOne({email: user_email}).exec(function findCB(authErr, foundAuth) {
+      if (authErr) {
+        cb(authErr, null);
+      } else {
+        User.findOne({id: foundAuth.id}).exec(function findCB(userErr, foundUser) {
+          if (userErr) {
+            cb(userErr, null);
+          } else {
+            var sections = [];
+            async.each(foundUser.enrolledIn, function iterator(section, sectionCallback) {
+              delete section.students;
+              classes.push(section);
+              sectionCallback();
+            });
+            cb(sections);
+          }
+        });
+      }
     });
   },
 

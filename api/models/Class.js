@@ -64,9 +64,9 @@ module.exports = {
   createAndAddSection: function(createdClass, section, cb) {
     var instructorName;
     if (Array.isArray(section.instructor)) {
-      instructorName = section.instructor[0].first_name + section.instructor[1].last_name;
+      instructorName = section.instructor[0].first_name + " " + section.instructor[1].last_name;
     } else if (section.instructor) {
-      instructorName = section.instructor.first_name + section.instructor.last_name;
+      instructorName = section.instructor.first_name + " " + section.instructor.last_name;
     }
     Section.create({
       course_id: createdClass.course_id,
