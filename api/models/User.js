@@ -12,6 +12,10 @@ module.exports = {
 
   attributes: require('waterlock').models.user.attributes({
     
+    student_id {
+      type: 'string'
+    },
+    
     enrolledIn: {
       type: 'array',
       defaultsTo: []

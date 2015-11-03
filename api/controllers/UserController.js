@@ -27,8 +27,8 @@ module.exports = require('waterlock').actions.user({
 	},
 
 	enroll: function(req,res) {
-		if (req.query.user && req.query.section_id) {
-			User.enroll(req.query.user, req.query.section_id, function(error) {
+		if (req.body.user && req.body.section_id) {
+			User.enroll(req.body.user, req.body.section_id, function(error) {
 				if (error) {
 					return res.status(400).send(error);
 				} else {
