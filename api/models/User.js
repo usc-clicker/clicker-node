@@ -41,12 +41,16 @@ module.exports = {
               if (!foundSection.students) {
                 foundSection.students = [];
               }
-              foundSection.students.push(foundUser.id);
+              if (foundSection.students.indexOf(foundUser.id) < 0) {
+                foundSection.students.push(foundUser.id);
+              }
               foundSection.save();
               if (!foundUser.enrolledIn) {
                 foundUser.enrolledIn = [];
               }
-              foundUser.enrolledIn.push(section_id);
+              if (foundUser.enrolledIn.indexOf(section_id.id) < 0) {
+                foundUser.enrolledIn.push(section_id);
+              }
               foundUser.save()
               cb();
             });
@@ -74,8 +78,9 @@ module.exports = {
                 }
                 sectionCallback();
               });
+            }, function done(err) {
+                cb(null, sections);
             });
-            cb(null, sections);
           }
         });
       }
