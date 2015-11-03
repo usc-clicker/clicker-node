@@ -1,6 +1,6 @@
 # USC Clicker Node app
 
-Requires Node.js v4.1.0
+Requires Node.js v4.2.x
 
 Clone this repo, then run `npm install`
 
@@ -13,7 +13,9 @@ Base url: `http://fontify.usc.edu`
 
 ###Auth
 
-`POST /auth/login`
+`POST /auth/register`
+
+Return `200` if account creation successful; `403` if registration failed (email already in use, password does not meet requirements, etc)
 
 #####Parameters
 
@@ -30,7 +32,38 @@ Base url: `http://fontify.usc.edu`
         <tr>
             <td><code>email</code></td>
             <td>yes</td>
-            <td>integer</td>
+            <td>string</td>
+            <td>Email address of the user. If the email does not exist, a new account will be created with this email and password.</td>
+        </tr>
+        <tr>
+            <td><code>password</code></td>
+            <td>yes</td>
+            <td>password</td>
+            <td>Password of the user.  If the email does not exist, a new account will be created with this email and password.</td>
+        </tr>
+    </tbody>
+</table>
+
+`POST /auth/login`
+
+Returns `200` if login successful; `403` if email or password is invalid
+
+#####Parameters
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Required?</th>
+            <th width="50">Type</th>
+            <th width=100%>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>email</code></td>
+            <td>yes</td>
+            <td>string</td>
             <td>Email address of the user. If the email does not exist, a new account will be created with this email and password.</td>
         </tr>
         <tr>
