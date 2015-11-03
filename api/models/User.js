@@ -38,8 +38,14 @@ module.exports = {
             cb(userErr, null);
           } else {
             Section.findOne({section_id: section_id}).exec(function findCB(sectionErr, foundSection) {
+              if (!foundSection.students) {
+                foundSection.students = [];
+              }
               foundSection.students.push(foundUser.id);
               foundSection.save();
+              if (!foundUser.enrolledIn) {
+                foundUser.enrolledIn = [];
+              }
               foundUser.enrolledIn.push(section_id);
               foundUser.save()
               cb();
