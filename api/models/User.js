@@ -52,7 +52,7 @@ module.exports = {
               if (!foundUser.enrolledIn) {
                 foundUser.enrolledIn = [];
               }
-              if (foundUser.enrolledIn.indexOf(section_id.id) < 0) {
+              if (foundUser.enrolledIn.indexOf(section_id) < 0) {
                 foundUser.enrolledIn.push(section_id);
               }
               foundUser.save()
