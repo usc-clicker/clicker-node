@@ -48,7 +48,7 @@ module.exports = require('waterlock').actions.user({
 				} else {
 					return res.status(200).send(results);
 				}
-			})
+			});
 		} else {
 			return res.status(400).send("Invalid request");
 		}

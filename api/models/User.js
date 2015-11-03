@@ -66,12 +66,16 @@ module.exports = {
             cb(userErr, null);
           } else {
             var sections = [];
-            async.each(foundUser.enrolledIn, function iterator(section, sectionCallback) {
-              delete section.students;
-              sections.push(section);
-              sectionCallback();
+            async.each(foundUser.enrolledIn, function iterator(section_id, sectionCallback) {
+              Section.findOne({section_id: section_id}).exec(function findCB(sectionErr, foundSection) {
+                if (foundSection) {
+                  delete foundSection.students;
+                  sections.push(foundSection);
+                }
+                sectionCallback();
+              });
             });
-            cb(sections);
+            cb(null, sections);
           }
         });
       }

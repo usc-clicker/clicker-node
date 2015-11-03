@@ -92,10 +92,37 @@ Returns `200` if login successful; `403` if email or password is invalid
     </thead>
     <tbody>
         <tr>
-            <td><code>id</code></td>
+            <td><code>user</code></td>
+            <td>yes</td>
+            <td>string</td>
+            <td>User email</td>
+        </tr>
+        <tr>
+            <td><code>section_id</code></td>
             <td>yes</td>
             <td>integer</td>
-            <td>ID of the class to be enrolled in</td>
+            <td>Section ID of the section to be enrolled in</td>
+        </tr>
+    </tbody>
+</table>
+
+`GET /user/classes`
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Required?</th>
+            <th width="50">Type</th>
+            <th width=100%>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>user</code></td>
+            <td>yes</td>
+            <td>string</td>
+            <td>User email</td>
         </tr>
     </tbody>
 </table>
