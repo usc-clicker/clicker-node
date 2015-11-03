@@ -18,7 +18,7 @@ module.exports = require('waterlock').actions.user({
 				} else {
 					console.log("results");
 					console.log(results);
-					return res.send(results);
+					return res.status(200).send(results);
 				}
 			});
 		} else {
@@ -32,7 +32,7 @@ module.exports = require('waterlock').actions.user({
 				if (error) {
 					return res.status(400).send(error);
 				} else {
-					return res.send("ok");
+					return res.status(200).send("ok");
 				}
 			});
 		} else {
@@ -46,7 +46,7 @@ module.exports = require('waterlock').actions.user({
 				if (error) {
 					return res.status(400).send(error);
 				} else {
-					return res.send(results);
+					return res.status(200).send(results);
 				}
 			})
 		} else {
