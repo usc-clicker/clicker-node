@@ -68,7 +68,7 @@ module.exports = {
             var sections = [];
             async.each(foundUser.enrolledIn, function iterator(section, sectionCallback) {
               delete section.students;
-              classes.push(section);
+              sections.push(section);
               sectionCallback();
             });
             cb(sections);
