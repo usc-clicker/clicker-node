@@ -34,7 +34,7 @@ module.exports = {
 		      }
 		      else {
 		        console.log("Found Quiz. Returning Question Set");
-		        return res.status(200).send(quizFound.questionSet);
+		        return res.status(200).send(JSON.parse(quizFound.questionSet));
 		      }
 		    });
 		} else {
