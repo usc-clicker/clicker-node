@@ -14,7 +14,7 @@ module.exports = {
   	},
     
   	questionSet: {
-  		type: 'array',
+  		type: 'json',
   		defaultsTo: []
   	}
   },
