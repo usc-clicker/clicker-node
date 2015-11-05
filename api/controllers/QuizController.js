@@ -27,7 +27,7 @@ module.exports = {
 				if(error) {
 					return res.status(400).send(error);
 				} else {
-					return res.json(correct);
+					return res.status(200).send(correct);
 				}
 			});
 		} else {
