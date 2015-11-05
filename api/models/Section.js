@@ -35,7 +35,12 @@ module.exports = {
     end_time: {
       type: 'string',
       required: true
-    }
+    },
+
+    students: {
+      type: 'array',
+      defaultsTo: []
+    },
 
   }
 };

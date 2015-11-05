@@ -1,6 +1,6 @@
 # USC Clicker Node app
 
-Requires Node.js v4.1.0
+Requires Node.js v4.2.x
 
 Clone this repo, then run `npm install`
 
@@ -13,7 +13,9 @@ Base url: `http://fontify.usc.edu`
 
 ###Auth
 
-`POST /auth/login`
+`POST /auth/register`
+
+Return `200` if account creation successful; `403` if registration failed (email already in use, password does not meet requirements, etc)
 
 #####Parameters
 
@@ -30,14 +32,45 @@ Base url: `http://fontify.usc.edu`
         <tr>
             <td><code>email</code></td>
             <td>yes</td>
-            <td>integer</td>
-            <td>Email address of the user. If the email does not exist, a new account will be created with this email and password.</td>
+            <td>string</td>
+            <td>Email address of the user.</td>
         </tr>
         <tr>
             <td><code>password</code></td>
             <td>yes</td>
             <td>password</td>
-            <td>Password of the user.  If the email does not exist, a new account will be created with this email and password.</td>
+            <td>Password of the user. </td>
+        </tr>
+    </tbody>
+</table>
+
+`POST /auth/login`
+
+Returns `200` if login successful; `403` if email or password is invalid
+
+#####Parameters
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Required?</th>
+            <th width="50">Type</th>
+            <th width=100%>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>email</code></td>
+            <td>yes</td>
+            <td>string</td>
+            <td>Email address of the user. If the email does not exist, a `403` will be returned.</td>
+        </tr>
+        <tr>
+            <td><code>password</code></td>
+            <td>yes</td>
+            <td>password</td>
+            <td>Password of the user.  If the password is incorrect, a `403` will be returned.</td>
         </tr>
     </tbody>
 </table>
@@ -59,10 +92,39 @@ Base url: `http://fontify.usc.edu`
     </thead>
     <tbody>
         <tr>
-            <td><code>id</code></td>
+            <td><code>user</code></td>
+            <td>yes</td>
+            <td>string</td>
+            <td>User email</td>
+        </tr>
+        <tr>
+            <td><code>section_id</code></td>
             <td>yes</td>
             <td>integer</td>
-            <td>ID of the class to be enrolled in</td>
+            <td>Section ID of the section to be enrolled in</td>
+        </tr>
+    </tbody>
+</table>
+
+`GET /user/classes`
+
+#####Parameters
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Required?</th>
+            <th width="50">Type</th>
+            <th width=100%>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>user</code></td>
+            <td>yes</td>
+            <td>string</td>
+            <td>User email</td>
         </tr>
     </tbody>
 </table>
