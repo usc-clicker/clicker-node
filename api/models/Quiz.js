@@ -67,7 +67,6 @@ module.exports = {
         cb(null, quizFound.questionSet);
       }
     });
-    cb();
   }
 
 };
