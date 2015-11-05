@@ -19,6 +19,22 @@ module.exports = {
 		} else {
 			return res.status(400).send("Invalid request");
 		}
+	}, 
+	
+	allQuestions: function(req,res) {
+		if (req.query.quiz_id) {
+			Quiz.allQuestions(req.query.quiz_id, function(error, correct) {
+				if(error) {
+					return res.status(400).send(error);
+				} else {
+					return res.status(200).send({
+						correct: correct
+					});
+				}
+			});
+		} else {
+			return res.status(400).send("Invalid request");
+		}
 	}
 };
 

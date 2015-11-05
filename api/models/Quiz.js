@@ -50,6 +50,25 @@ module.exports = {
 			});
   		}
   	});
+  },
+
+  allQuestions: function(quiz_id, cb) {
+    Quiz.findOne({id: quiz_id}).exec(function findQuiz(quizErr, quizFound) {
+      if(quizErr) {
+        console.log(quizErr);
+        cb(quizErr, null);
+      }
+      else if (!quizFound) {
+        console.log("Could not find quiz");
+        cb("Could not find quiz", null);
+      }
+      else {
+        console.log("Found Quiz. Returning Question Set");
+        cb(null, quizFound.questionSet);
+      }
+    });
+    cb();
   }
+
 };
 
