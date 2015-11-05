@@ -64,7 +64,17 @@ module.exports = {
       }
       else {
         console.log("Found Quiz. Returning Question Set");
-        cb(null, quizFound.questionSet);
+        var questions = [];
+        async.each(quizFound.questionSet, function iterator(question_id, questionCallback) {
+          Question.findOne({id: question_id}).exec(function findCB(questionErr, foundQuestion) {
+            if (foundQuestion) {
+              questions.push(foundQuestion);
+            }
+            questionCallback();
+          });
+        }, function done(err) {
+          cb(null, questions);
+        });
       }
     });
   }
