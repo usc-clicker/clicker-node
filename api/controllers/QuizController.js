@@ -23,20 +23,13 @@ module.exports = {
 
 	allQuestions: function(req,res) {
 		if (req.query.quiz_id) {
-			Quiz.findOne({id: quiz_id}).exec(function findQuiz(quizErr, quizFound) {
-		      if(quizErr) {
-		        console.log(quizErr);
-		        return res.status(400).send(quizErr);
-		      }
-		      else if (!quizFound) {
-		        console.log("Could not find quiz");
-		        return res.status(400).send("Could not find quiz");
-		      }
-		      else {
-		        console.log("Found Quiz. Returning Question Set");
-		        return res.status(200).send(JSON.parse(quizFound.questionSet));
-		      }
-		    });
+			Quiz.allQuestions(req.query.quiz_id, function(error, correct) {
+				if(error) {
+					return res.status(400).send(error);
+				} else {
+					return res.send(200, correct);
+				}
+			});
 		} else {
 			return res.status(400).send("Invalid request");
 		}
