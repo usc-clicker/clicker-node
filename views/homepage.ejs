@@ -1,12 +1,13 @@
 <script>
 
 $(document).ready(function () {
+  $("#questions").hide();
+  $("#quizzes").hide();
   var questionTemplate = Handlebars.compile($("#question-template").html());
   var quizTemplate = Handlebars.compile($("#quiz-template").html());
   var pageTitle = $("#title");
 
   $("#quizzesItem").click(function() {
-    console.log("quizzes click");
     $("#questions").hide();
     $("#quizzes").show();
     pageTitle.text("Quizzes");
@@ -14,7 +15,6 @@ $(document).ready(function () {
   });
 
   $("#questionsItem").click(function() {
-    console.log("questions click");
     $("#quizzes").hide();
     $("#questions").show();
     pageTitle.text("Questions");
@@ -27,11 +27,15 @@ $(document).ready(function () {
         var questions = [];
         var quizHtml = '';
         async.each(quiz.questionSet, function iterator(question_id, questionCallback) {
-            io.socket.get('/quiz/allQuestions?quiz_id' + question_id, function (question) {
-                questions.push(question.question);
-                questionCallback();
-            });
+          console.log("async each: " + question_id);
+          io.socket.get('/quiz/allQuestions?quiz_id' + question_id, function (question) {
+            console.log(question.question);
+            questions.push(question.question);
+            questionCallback();
+          });
         }, function done(err) {
+          console.log("done");
+          console.log(quizHtml);
           quiz.questions = questions;
           quizHtml += quizTemplate(quiz);
           $("#quizzes").append(quizHtml);
@@ -51,45 +55,45 @@ $(document).ready(function () {
 </script>
 
 <script type="text/x-handlebars" id="question-template">
-    <div class="mdl-cell mdl-cell--4-col">
-        <div class="mdl-card mdl-shadow--2dp">
-          <div class="mdl-card__title">
-            {{question}}
-          </div>
-          <div class="mdl-card__supporting-text">
-            <ul>
-            {{#each choices}}
-                <li>{{this}}</li>
-            {{/each}}
-            </ul>
-          </div>
-          <div class="mdl-card__actions mdl-card--border">
-            <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Edit</a>
-            <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Delete</a>
-          </div>
-        </div>
+  <div class="mdl-cell mdl-cell--4-col">
+    <div class="mdl-card mdl-shadow--2dp">
+      <div class="mdl-card__title">
+        {{question}}
+      </div>
+      <div class="mdl-card__supporting-text">
+        <ul>
+          {{#each choices}}
+          <li>{{this}}</li>
+          {{/each}}
+        </ul>
+      </div>
+      <div class="mdl-card__actions mdl-card--border">
+        <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Edit</a>
+        <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Delete</a>
+      </div>
     </div>
+  </div>
 </script>
 
 <script type="text/x-handlebars" id="quiz-template">
-    <div class="mdl-cell mdl-cell--4-col">
-        <div class="mdl-card mdl-shadow--2dp">
-          <div class="mdl-card__title">
-            {{quiz_name}}
-          </div>
-          <div class="mdl-card__supporting-text">
-            <ul>
-            {{#each questions}}
-                <li>{{this}}</li>
-            {{/each}}
-            </ul>
-          </div>
-          <div class="mdl-card__actions mdl-card--border">
-            <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Edit</a>
-            <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Delete</a>
-          </div>
-        </div>
+  <div class="mdl-cell mdl-cell--4-col">
+    <div class="mdl-card mdl-shadow--2dp">
+      <div class="mdl-card__title">
+        {{quiz_name}}
+      </div>
+      <div class="mdl-card__supporting-text">
+        <ul>
+          {{#each questions}}
+          <li>{{this}}</li>
+          {{/each}}
+        </ul>
+      </div>
+      <div class="mdl-card__actions mdl-card--border">
+        <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Edit</a>
+        <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Delete</a>
+      </div>
     </div>
+  </div>
 </script>
 
 <div class="clicker-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
