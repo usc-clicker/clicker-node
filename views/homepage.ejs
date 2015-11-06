@@ -70,9 +70,11 @@ $(document).ready(function () {
             studentCallback();
           });
         }, function done(err) {
-          section.students = students;
-          sectionHtml += sectionTemplate(section);
-          $("#sections").append(sectionHtml);
+          if (students.length > 0) {
+            section.students = students;
+            sectionHtml += sectionTemplate(section);
+            $("#sections").append(sectionHtml);
+          }
         });
       });
   });
