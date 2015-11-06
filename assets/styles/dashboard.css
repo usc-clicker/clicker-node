@@ -125,6 +125,13 @@ _:-ms-input-placeholder, :root .clicker-graph {
   color: #d9006e;
 }
 
+.clicker-fab {
+  right: 0;
+  bottom: 0;
+  margin: 50px;
+  position: absolute;
+}
+
 .clicker-cards {
   align-items: flex-start;
   align-content: flex-start;

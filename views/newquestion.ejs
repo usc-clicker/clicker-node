@@ -1,0 +1,123 @@
+<script>
+
+$(document).ready(function () {
+  var choiceTemplate = Handlebars.compile($("#choice-template").html());
+
+  var choiceInputs = [];
+
+  $("#submit").click(function() {
+    console.log("save question");
+    var choices = [];
+    choiceInputs.forEach(function(choice) {
+      console.log($(choice).text());
+      choices.push($(choice).val());
+    });
+
+    var question = {};
+    question.question = $("#question").val();
+    question.choices = choices;
+    question.time_limit = $("#time_limit").val();
+    question.type="multiple-choice";
+
+    console.log(question);
+
+    io.socket.post('/question', question, function (data, res) {
+      console.log(data);
+      console.log(res);
+    });
+
+    return false;
+  });
+
+  $("#addChoice").click(function() {
+    var newChoiceItem = choiceTemplate();
+    var input = $(newChoiceItem).children()[0]
+    componentHandler.upgradeElement($(newChoiceItem).children()[0]);
+    choiceInputs.push(input);
+    $("#choices").append(newChoiceItem);
+    return false;
+  });
+});
+
+</script>
+
+<script type="text/x-handlebars" id="choice-template">
+   <div class="mdl-textfield mdl-js-textfield">
+    <input class="mdl-textfield__input" type="text" class="choice">
+    <label class="mdl-textfield__label" for="choice">Enter Choice...</label>
+  </div>
+  <br>
+</script>
+
+<div class="clicker-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+  <header class="clicker-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
+    <div class="mdl-layout__header-row">
+      <span class="mdl-layout-title" id="title">New Question</span>
+      <div class="mdl-layout-spacer"></div>
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable">
+        <label class="mdl-button mdl-js-button mdl-button--icon" for="search">
+          <i class="material-icons">search</i>
+        </label>
+        <div class="mdl-textfield__expandable-holder">
+          <input class="mdl-textfield__input" type="text" id="search">
+          <label class="mdl-textfield__label" for="search">Enter your query...</label>
+        </div>
+      </div>
+      <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="hdrbtn">
+        <i class="material-icons">more_vert</i>
+      </button>
+      <ul class="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" for="hdrbtn">
+        <li class="mdl-menu__item">About</li>
+        <li class="mdl-menu__item">Contact</li>
+        <li class="mdl-menu__item">Legal information</li>
+      </ul>
+    </div>
+  </header>
+  <div class="clicker-drawer mdl-layout__drawer mdl-color--red-900 mdl-color-text--blue-grey-50">
+    <header class="clicker-drawer-header">
+      <img src="http://qca.st/images/team/david.jpg" class="clicker-avatar"/>
+      <div class="clicker-avatar-dropdown">
+        <span>davidmca@usc.edu</span>
+        <div class="mdl-layout-spacer"></div>
+        <button id="accbtn" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+          <i class="material-icons" role="presentation">arrow_drop_down</i>
+          <span class="visuallyhidden">Accounts</span>
+        </button>
+      </div>
+    </header>
+    <nav class="clicker-navigation mdl-navigation mdl-color--red-700">
+      <a class="mdl-navigation__link" href=""><i class="mdl-color-text--yellow-700 material-icons" role="presentation">home</i>Home</a>
+      <a class="mdl-navigation__link" href="" id="quizzesItem">
+        <i class="mdl-color-text--yellow-700 material-icons" role="presentation">list</i>Quizzes</a>
+      <a class="mdl-navigation__link" href="" id="questionsItem">
+        <i class="mdl-color-text--yellow-700 material-icons" role="presentation">help</i>Questions</a>
+      <a class="mdl-navigation__link" href="" id="sectionsItem">
+        <i class="mdl-color-text--yellow-700 material-icons" role="presentation">class</i>Sections</a>
+      <a class="mdl-navigation__link" href=""><i class="mdl-color-text--yellow-700 material-icons" role="presentation">insert_chart</i>Reports</a>
+    </nav>
+  </div>
+  <main class="mdl-layout__content mdl-color--grey-100">
+    <div class="mdl-grid clicker-content">
+      <form>
+        <div class="mdl-textfield mdl-js-textfield">
+          <input class="mdl-textfield__input" type="text" id="question">
+          <label class="mdl-textfield__label" for="question">Question</label>
+        </div>
+        <br>
+        <div id="choices"></div>
+        <button id="addChoice" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored">
+          <i class="material-icons">add</i>
+        </button>
+        <br>
+        <div class="mdl-textfield mdl-js-textfield">
+          <input class="mdl-textfield__input" type="number" id="time_limit">
+          <label class="mdl-textfield__label" for="time_limit">Time Limit (Seconds)</label>
+        </div>
+        <br>
+        <button id="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+          Submit
+        </button>
+      </form>
+    </div>
+  </main>
+</div>

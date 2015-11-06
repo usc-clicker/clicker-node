@@ -36,6 +36,10 @@ module.exports.routes = {
     view: 'homepage'
   },
 
+  '/question/create': {
+    view: 'newquestion'
+  },
+
   '/importClasses': 'ClassController.import',
 
   /***************************************************************************
