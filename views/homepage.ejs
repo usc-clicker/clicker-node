@@ -3,12 +3,15 @@
 $(document).ready(function () {
   $("#questions").hide();
   $("#quizzes").hide();
+  $("#sections").hide();
   var questionTemplate = Handlebars.compile($("#question-template").html());
   var quizTemplate = Handlebars.compile($("#quiz-template").html());
+  var sectionTemplate = Handlebars.compile($("#section-template").html());
   var pageTitle = $("#title");
 
   $("#quizzesItem").click(function() {
     $("#questions").hide();
+    $("#sections").hide();
     $("#quizzes").show();
     pageTitle.text("Quizzes");
     return false;
@@ -16,8 +19,17 @@ $(document).ready(function () {
 
   $("#questionsItem").click(function() {
     $("#quizzes").hide();
+    $("#sections").hide();
     $("#questions").show();
     pageTitle.text("Questions");
+    return false;
+  });
+
+  $("#sectionsItem").click(function() {
+    $("#quizzes").hide();
+    $("#questions").hide();
+    $("#sections").show();
+    pageTitle.text("Sections");
     return false;
   });
 
@@ -45,6 +57,24 @@ $(document).ready(function () {
       questionHtml += questionTemplate(question);
     });
     $("#questions").html(questionHtml);
+  });
+
+  io.socket.get('/section/', function (sections) {
+      $("#sections").empty();
+      sections.forEach(function(section) {
+        var students = [];
+        var sectionHtml = '';
+        async.each(section.students, function iterator(student_id, studentCallback) {
+          io.socket.get('/auth/' + student_id, function (student) {
+            students.push(student.email);
+            studentCallback();
+          });
+        }, function done(err) {
+          section.students = students;
+          sectionHtml += sectionTemplate(section);
+          $("#sections").append(sectionHtml);
+        });
+      });
   });
 });
 
@@ -80,6 +110,33 @@ $(document).ready(function () {
       <div class="mdl-card__supporting-text">
         <ul>
           {{#each questions}}
+          <li>{{this}}</li>
+          {{/each}}
+        </ul>
+      </div>
+      <div class="mdl-card__actions mdl-card--border">
+        <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Edit</a>
+        <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Delete</a>
+      </div>
+    </div>
+  </div>
+</script>
+
+<script type="text/x-handlebars" id="section-template">
+  <div class="mdl-cell mdl-cell--4-col">
+    <div class="mdl-card mdl-shadow--2dp">
+      <div class="mdl-card__title">
+        <div class="mdl-cell--6-col">
+          {{course_id}}
+        </div>
+        <div class="mdl-cell--6-col">
+          {{section_id}}
+        </div>  
+      </div>
+      <div class="mdl-card__supporting-text">
+        <b>{{instructor}}</b>
+        <ul>
+          {{#each students}}
           <li>{{this}}</li>
           {{/each}}
         </ul>
@@ -134,7 +191,8 @@ $(document).ready(function () {
         <i class="mdl-color-text--yellow-700 material-icons" role="presentation">list</i>Quizzes</a>
       <a class="mdl-navigation__link" href="" id="questionsItem">
         <i class="mdl-color-text--yellow-700 material-icons" role="presentation">help</i>Questions</a>
-      <a class="mdl-navigation__link" href=""><i class="mdl-color-text--yellow-700 material-icons" role="presentation">class</i>Sections</a>
+      <a class="mdl-navigation__link" href="" id="sectionsItem">
+        <i class="mdl-color-text--yellow-700 material-icons" role="presentation">class</i>Sections</a>
       <a class="mdl-navigation__link" href=""><i class="mdl-color-text--yellow-700 material-icons" role="presentation">insert_chart</i>Reports</a>
     </nav>
   </div>
@@ -142,6 +200,7 @@ $(document).ready(function () {
     <div class="mdl-grid clicker-content">
         <div class="mdl-grid" id="questions"></div>
         <div class="mdl-grid" id="quizzes"></div>
+        <div class="mdl-grid" id="sections"></div>
     </div>
   </main>
 </div>
