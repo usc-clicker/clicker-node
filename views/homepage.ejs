@@ -27,15 +27,11 @@ $(document).ready(function () {
         var questions = [];
         var quizHtml = '';
         async.each(quiz.questionSet, function iterator(question_id, questionCallback) {
-          console.log("async each: " + question_id);
           io.socket.get('/question/' + question_id, function (question) {
-            console.log(question.question);
             questions.push(question.question);
             questionCallback();
           });
         }, function done(err) {
-          console.log("done");
-          console.log(quizHtml);
           quiz.questions = questions;
           quizHtml += quizTemplate(quiz);
           $("#quizzes").append(quizHtml);
