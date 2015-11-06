@@ -5,6 +5,22 @@ $(document).ready(function () {
   var quizTemplate = Handlebars.compile($("#quiz-template").html());
   var pageTitle = $("#title");
 
+  $("#quizzesItem").click(function() {
+    console.log("quizzes click");
+    $("#questions").hide();
+    $("#quizzes").show();
+    pageTitle.text("Quizzes");
+    return false;
+  });
+
+  $("#questionsItem").click(function() {
+    console.log("questions click");
+    $("#quizzes").hide();
+    $("#questions").show();
+    pageTitle.text("Questions");
+    return false;
+  });
+
   io.socket.get('/quiz/', function (quizzes) {
       $("#quizzes").empty();
       quizzes.forEach(function(quiz) {
@@ -102,6 +118,7 @@ $(document).ready(function () {
   </header>
   <div class="clicker-drawer mdl-layout__drawer mdl-color--red-900 mdl-color-text--blue-grey-50">
     <header class="clicker-drawer-header">
+      <img src="http://qca.st/images/team/david.jpg" class="clicker-avatar"/>
       <div class="clicker-avatar-dropdown">
         <span>davidmca@usc.edu</span>
         <div class="mdl-layout-spacer"></div>
@@ -113,8 +130,10 @@ $(document).ready(function () {
     </header>
     <nav class="clicker-navigation mdl-navigation mdl-color--red-700">
       <a class="mdl-navigation__link" href=""><i class="mdl-color-text--yellow-700 material-icons" role="presentation">home</i>Home</a>
-      <a class="mdl-navigation__link" href=""><i class="mdl-color-text--yellow-700 material-icons" role="presentation">list</i>Quizzes</a>
-      <a class="mdl-navigation__link" href=""><i class="mdl-color-text--yellow-700 material-icons" role="presentation">help</i>Questions</a>
+      <a class="mdl-navigation__link" href="" id="quizzesItem">
+        <i class="mdl-color-text--yellow-700 material-icons" role="presentation">list</i>Quizzes</a>
+      <a class="mdl-navigation__link" href="" id="questionsItem">
+        <i class="mdl-color-text--yellow-700 material-icons" role="presentation">help</i>Questions</a>
       <a class="mdl-navigation__link" href=""><i class="mdl-color-text--yellow-700 material-icons" role="presentation">class</i>Sections</a>
       <a class="mdl-navigation__link" href=""><i class="mdl-color-text--yellow-700 material-icons" role="presentation">insert_chart</i>Reports</a>
     </nav>
