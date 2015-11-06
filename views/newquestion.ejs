@@ -3,27 +3,31 @@
 $(document).ready(function () {
   var choiceTemplate = Handlebars.compile($("#choice-template").html());
 
-  var choiceInputs = [];
-
   $("#submit").click(function() {
     console.log("save question");
     var choices = [];
-    choiceInputs.forEach(function(choice) {
-      console.log($(choice).text());
-      choices.push($(choice).val());
+
+    $('.choice-input').each(function(i, choice) {
+        choices.push($(choice).val());
     });
 
     var question = {};
     question.question = $("#question").val();
     question.choices = choices;
-    question.time_limit = $("#time_limit").val();
+    question.time_limit = parseInt($("#time_limit").val());
     question.type="multiple-choice";
+    question.answer = $("#correct_answer").val();
 
-    console.log(question);
+    // console.log(question);
 
     io.socket.post('/question', question, function (data, res) {
       console.log(data);
       console.log(res);
+      if (res.statusCode == 201) {
+        window.location = '/';
+      } else {
+        console.log("error creating question");
+      }
     });
 
     return false;
@@ -33,7 +37,6 @@ $(document).ready(function () {
     var newChoiceItem = choiceTemplate();
     var input = $(newChoiceItem).children()[0]
     componentHandler.upgradeElement($(newChoiceItem).children()[0]);
-    choiceInputs.push(input);
     $("#choices").append(newChoiceItem);
     return false;
   });
@@ -43,7 +46,7 @@ $(document).ready(function () {
 
 <script type="text/x-handlebars" id="choice-template">
    <div class="mdl-textfield mdl-js-textfield">
-    <input class="mdl-textfield__input" type="text" class="choice">
+    <input class="choice-input mdl-textfield__input" type="text" class="choice">
     <label class="mdl-textfield__label" for="choice">Enter Choice...</label>
   </div>
   <br>
@@ -108,6 +111,11 @@ $(document).ready(function () {
         <button id="addChoice" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored">
           <i class="material-icons">add</i>
         </button>
+        <br>
+        <div class="mdl-textfield mdl-js-textfield">
+          <input class="mdl-textfield__input" type="text" id="correct_answer">
+          <label class="mdl-textfield__label" for="correct_answer">Correct Answer</label>
+        </div>
         <br>
         <div class="mdl-textfield mdl-js-textfield">
           <input class="mdl-textfield__input" type="number" id="time_limit">
