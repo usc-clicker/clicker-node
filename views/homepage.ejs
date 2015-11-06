@@ -28,7 +28,7 @@ $(document).ready(function () {
         var quizHtml = '';
         async.each(quiz.questionSet, function iterator(question_id, questionCallback) {
           console.log("async each: " + question_id);
-          io.socket.get('/quiz/allQuestions?quiz_id' + question_id, function (question) {
+          io.socket.get('/question/' + question_id, function (question) {
             console.log(question.question);
             questions.push(question.question);
             questionCallback();
