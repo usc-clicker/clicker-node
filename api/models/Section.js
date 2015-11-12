@@ -113,8 +113,6 @@ module.exports = {
         cb("Could not find Section", null);
       }
     });
-    cb(null, correct);
-    
   }
 };
 
