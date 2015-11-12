@@ -45,11 +45,12 @@ module.exports = {
   },
 
   statisticsQuiz: function (section_id, quiz_id, cb) {
-    var A = [], B = [], C = [], D = [], correct = [];
+    
     Section.findOne({id: section_id}).exec(function findSection(sectionErr, foundSection) {
       if(sectionErr) {
         cb(sectionErr, null);
       } else if (foundSection) {
+        var A = [], B = [], C = [], D = [], correct = [];
         for(var i = 0; i < foundSection.students.length; i++) {
           User.findOne({id: foundSection.students[i]}).exec(function findStudent(studentErr, foundStudent) {
             if(studentErr) {
