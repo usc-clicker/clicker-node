@@ -45,7 +45,7 @@ module.exports = {
   },
 
   statisticsQuiz: function (section_id, quiz_id, cb) {
-    var A = [], B = [], C = [], D = [];
+    var A = [], B = [], C = [], D = [], correct = [];
     Section.findOne({id: section_id}).exec(function findSection(sectionErr, foundSection) {
       if(sectionErr) {
         cb(sectionErr, null);
@@ -82,7 +82,11 @@ module.exports = {
                           D[j]++;
                         }
                       }
-                      cb(null,A);
+                      correct.push(A);
+                      correct.push(B);
+                      correct.push(C);
+                      correct.push(D);
+                      cb(null, correct);
                     }
                   }
               });
@@ -92,7 +96,7 @@ module.exports = {
             }
           });
         }
-        var correct = [];
+        //var correct = [];
         correct.push(A);
         correct.push(B);
         correct.push(C);
