@@ -56,7 +56,7 @@ module.exports = {
               cb(studentErr, null);
             }
             else if (foundStudent) {
-              AnswerSet.find({quiz_id: quiz_id, user_id: foundStudent.id.toString}).exec(function findAnswerSet(answerSetErr, foundAnswerSet) {
+              AnswerSet.find({quiz_id: quiz_id.toString(), user_id: foundStudent.id.toString()}).exec(function findAnswerSet(answerSetErr, foundAnswerSet) {
                 cb(null, "TEST");
                 if(answerSetErr) {
                   cb(answerSetErr, null);
