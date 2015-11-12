@@ -57,7 +57,6 @@ module.exports = {
             }
             else if (foundStudent) {
               AnswerSet.find({quiz_id: quiz_id.toString(), user_id: foundStudent.id.toString()}).exec(function findAnswerSet(answerSetErr, foundAnswerSet) {
-                cb(null, "TEST");
                 if(answerSetErr) {
                   cb(answerSetErr, null);
                 } else {
@@ -97,7 +96,7 @@ module.exports = {
         correct.push(B);
         correct.push(C);
         correct.push(D);
-        //cb(null, correct);
+        cb(null, correct);
       }
       else {
         cb("Could not find Section", null);
