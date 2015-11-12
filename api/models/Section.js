@@ -92,9 +92,10 @@ module.exports = {
                         correct[1] = B;
                         correct[2] = C;
                         correct[3] = D;
+                        cb(null, correct);
                       }
                       
-                      cb(null, correct);
+                      
                     }
                   }
               });
@@ -112,6 +113,7 @@ module.exports = {
         cb("Could not find Section", null);
       }
     });
+    cb(null, correct);
     
   }
 };
