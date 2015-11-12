@@ -82,6 +82,18 @@ module.exports = {
                           D[j]++;
                         }
                       }
+                      if(correct.length < 4) {
+                        correct.push(A);
+                        correct.push(B);
+                        correct.push(C);
+                        correct.push(D);
+                      } else {
+                        correct[0] = A;
+                        correct[1] = B;
+                        correct[2] = C;
+                        correct[3] = D;
+                      }
+                      
                       //cb(null, correct);
                     }
                   }
@@ -93,10 +105,7 @@ module.exports = {
           });
         }
         //var correct = [];
-        correct.push(A);
-        correct.push(B);
-        correct.push(C);
-        correct.push(D);
+        
         cb(null, correct);
       }
       else {
