@@ -46,7 +46,7 @@ module.exports = {
 
   statisticsQuiz: function (section_id, quiz_id, cb) {
     var A = [], B = [], C = [], D = [];
-    Section.findOne({section_id: section_id}).exec(function findSection(sectionErr, foundSection) {
+    Section.findOne({id: section_id}).exec(function findSection(sectionErr, foundSection) {
       if(sectionErr) {
         cb(sectionErr, null);
       } else if (foundSection) {
