@@ -82,11 +82,7 @@ module.exports = {
                           D[j]++;
                         }
                       }
-                      correct.push(A);
-                      correct.push(B);
-                      correct.push(C);
-                      correct.push(D);
-                      cb(null, correct);
+                      //cb(null, correct);
                     }
                   }
               });
@@ -101,7 +97,7 @@ module.exports = {
         correct.push(B);
         correct.push(C);
         correct.push(D);
-        //cb(null, correct);
+        cb(null, correct);
       }
       else {
         cb("Could not find Section", null);
