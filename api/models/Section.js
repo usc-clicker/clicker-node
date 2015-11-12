@@ -94,7 +94,7 @@ module.exports = {
                         correct[3] = D;
                       }
                       
-                      //cb(null, correct);
+                      cb(null, correct);
                     }
                   }
               });
@@ -106,7 +106,7 @@ module.exports = {
         }
         //var correct = [];
         
-        cb(null, correct);
+        //cb(null, correct);
       }
       else {
         cb("Could not find Section", null);
