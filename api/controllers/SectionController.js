@@ -23,7 +23,7 @@ module.exports = {
 
 	statisticsQuestion: function(req,res) {
 		if (req.query.section_id, req.query.quiz_id, req.query.index) {
-			Section.statisticsQuiz(req.query.section_id, req.query.quiz_id, req.query.index, function(error, correct) {
+			Section.statisticsQuestion(req.query.section_id, req.query.quiz_id, req.query.index, function(error, correct) {
 				if(error) {
 					return res.status(400).send(error);
 				} else {

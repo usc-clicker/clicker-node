@@ -136,6 +136,9 @@ module.exports = {
                 } else {
                   while(foundAnswerSet.length) {
                     var answerSet = foundAnswerSet.pop();
+                    if(answerSet.answer_choice.length <= index) {
+                      cb("Index is invalid", null);
+                    } else {
                       if(answerSet.answer_choice[index].toUpperCase() == "A") {
                         A++;
                       }
@@ -164,6 +167,7 @@ module.exports = {
                       }
                     }
                   }
+                }
               });
             }
             else {
