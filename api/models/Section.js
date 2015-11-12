@@ -52,6 +52,7 @@ module.exports = {
       } else if (foundSection) {
         for(var i = 0; i < foundSection.students.length; i++) {
           User.findOne({id: foundSection.students[i]}).exec(function findStudent(studentErr, foundStudent) {
+            cb(null, foundStudent);
             if(studentErr) {
               cb(studentErr, null);
             }
@@ -101,7 +102,7 @@ module.exports = {
         correct.push(B);
         correct.push(C);
         correct.push(D);
-        cb(null, correct);
+        //cb(null, correct);
       }
       else {
         cb("Could not find Section", null);
