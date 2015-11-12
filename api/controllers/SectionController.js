@@ -19,6 +19,20 @@ module.exports = {
 		} else {
 			return res.status(400).send("Invalid request");
 		}
+	},
+
+	statisticsQuestion: function(req,res) {
+		if (req.query.section_id, req.query.quiz_id, req.query.index) {
+			Section.statisticsQuiz(req.query.section_id, req.query.quiz_id, req.query.index, function(error, correct) {
+				if(error) {
+					return res.status(400).send(error);
+				} else {
+					return res.send(200, correct);
+				}
+			});
+		} else {
+			return res.status(400).send("Invalid request");
+		}
 	}
 	
 };
