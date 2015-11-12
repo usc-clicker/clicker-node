@@ -107,7 +107,7 @@ module.exports = {
         }
         //var correct = [];
         
-        cb(null, i);
+        cb(null, A);
       }
       else {
         cb("Could not find Section", null);
