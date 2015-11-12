@@ -61,8 +61,8 @@ module.exports = {
                   cb(answerSetErr, null);
                 } else if (foundAnswerSet) {
                   while(foundAnswerSet.length) {
-                    cb(null, foundAnswerSet);
                     var answerSet = foundAnswerSet.pop();
+                    cb(null, answerSet);
                     if(answerSet.user_id == foundStudent.id.toString()) {
                       for(var j = 0; j < answerSet.answer_choice.length; j++) {
                         if(A.length < answerSet.answer_choice.length) {
