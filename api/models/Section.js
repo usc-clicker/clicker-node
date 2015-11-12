@@ -52,7 +52,6 @@ module.exports = {
       } else if (foundSection) {
         for(var i = 0; i < foundSection.students.length; i++) {
           User.findOne({id: foundSection.students[i]}).exec(function findStudent(studentErr, foundStudent) {
-            cb(null, foundStudent);
             if(studentErr) {
               cb(studentErr, null);
             }
@@ -62,10 +61,11 @@ module.exports = {
                   cb(answerSetErr, null);
                 } else if (foundAnswerSet) {
                   while(foundAnswerSet.length) {
+                    cb(null, foundAnswerSet);
                     var answerSet = foundAnswerSet.pop();
                     if(answerSet.user_id == foundStudent.id.toString()) {
                       for(var j = 0; j < answerSet.answer_choice.length; j++) {
-                        if(A.length <= j) {
+                        if(A.length < answerSet.answer_choice.length) {
                           A.push(0);
                           B.push(0);
                           C.push(0);
