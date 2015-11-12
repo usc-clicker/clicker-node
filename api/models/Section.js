@@ -40,8 +40,74 @@ module.exports = {
     students: {
       type: 'array',
       defaultsTo: []
-    },
+    }
 
+  },
+
+  statisticsQuiz: function (id, quiz_id, cb) {
+    var A = [], B = [], C = [], D = [];
+    Section.findOne({id: id}).exec(function findSection(sectionErr, foundSection) {
+      if(sectionErr) {S
+        cb(sectionErr, null);
+      } else if (foundSection) {
+        for(var i = 0; i < foundSection.students.length; i++) {
+          User.findOne({id: foundSection.students[i]}).exec(function findStudent(studentErr, foundStudent) {
+            if(studentErr) {
+              cb(studentErr, null);
+            }
+            else if (foundStudent) {
+              AnswerSet.find({quiz_id: quiz_id}).exec(function findAnswerSet(answerSetErr, foundAnswerSet) {
+                if(answerSetErr) {
+                  cb(answerSetErr, null);
+                } else if (foundAnswerSet) {
+                  while(foundAnswerSet.length) {
+                    var answerSet = foundAnswerSet.pop();
+                    if(answerSet.user_id == foundStudent.id.toString()) {
+                      for(var j = 0; j < answerSet.answer_choice.length; j++) {
+                        if(A.length <= j) {
+                          A.push(0);
+                          B.push(0);
+                          C.push(0);
+                          D.push(0);
+                        }
+                        if(answerSet.answer_choice[j].toUpperCase() == "A") {
+                          A[j]++;
+                        }
+                        else if (answerSet.answer_choice[j].toUpperCase() == "B") {
+                          B[j]++;
+                        }
+                        else if (answerSet.answer_choice[j].toUpperCase() == "C") {
+                          C[j]++;
+                        }
+                        else if (answerSet.answer_choice[j].toUpperCase() == "D") {
+                          D[j]++;
+                        }
+                      }
+                    }
+                  }
+                }
+                else {
+                  cb("No answer set for this quiz exists", null);
+                }
+              });
+            }
+            else {
+              cb("Student Section Mismatch. Make sure the student id in the Section table is actually in the User table.");
+            }
+          });
+        }
+        var correct = [];
+        correct.push(A);
+        correct.push(B);
+        correct.push(C);
+        correct.push(D);
+        cb(null, correct);
+      }
+      else {
+        cb("Could not find Section", null);
+      }
+    });
+    
   }
 };
 

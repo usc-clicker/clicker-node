@@ -7,6 +7,19 @@
 
 module.exports = {
 
+	statisticsQuiz: function(req,res) {
+		if (req.query.id, req.query.quiz_id) {
+			Section.statisticsQuiz(req.query.id, req.query.quiz_id, function(error, correct) {
+				if(error) {
+					return res.status(400).send(error);
+				} else {
+					return res.send(200, correct);
+				}
+			});
+		} else {
+			return res.status(400).send("Invalid request");
+		}
+	}
 	
 };
 

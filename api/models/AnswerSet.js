@@ -24,7 +24,14 @@ module.exports = {
 			defaultsTo: []
 		},
 
+		//Whether or not the Answer is correct
 		answer_validity: {
+			type: 'array',
+			defaultsTo: []
+		},
+
+		//The actual answer choice that they chose
+		answer_choice: {
 			type: 'array',
 			defaultsTo: []
 		}
