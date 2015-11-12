@@ -56,14 +56,13 @@ module.exports = {
               cb(studentErr, null);
             }
             else if (foundStudent) {
-              AnswerSet.find({quiz_id: quiz_id}).exec(function findAnswerSet(answerSetErr, foundAnswerSet) {
+              AnswerSet.find({quiz_id: quiz_id, user_id: foundStudent.id.toString}).exec(function findAnswerSet(answerSetErr, foundAnswerSet) {
+                cb(null, "TEST");
                 if(answerSetErr) {
                   cb(answerSetErr, null);
                 } else {
                   while(foundAnswerSet.length) {
                     var answerSet = foundAnswerSet.pop();
-                    cb(null, foundAnswerSet.length);
-                    if(answerSet.user_id == foundStudent.id.toString()) {
                       for(var j = 0; j < answerSet.answer_choice.length; j++) {
                         if(A.length < answerSet.answer_choice.length) {
                           A.push(0);
@@ -86,7 +85,6 @@ module.exports = {
                       }
                     }
                   }
-                }
               });
             }
             else {
