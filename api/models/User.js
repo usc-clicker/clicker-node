@@ -64,6 +64,38 @@ module.exports = {
     });
   },
 
+  unenroll: function (user_email, section_id, cb) {
+    Auth.findOne({email: user_email}).exec(function findCB(authErr, foundAuth) {
+      if (authErr) {
+        cb(authErr, null);
+      } else {
+        User.findOne({id: foundAuth.id}).exec(function findCB(userErr, foundUser) {
+          if (userErr) {
+            cb(userErr, null);
+          } else {
+            Section.findOne({section_id: section_id}).exec(function findCB(sectionErr, foundSection) {
+              if (!foundSection.students) {
+                foundSection.students = [];
+              }
+              if (foundSection.students.indexOf(foundUser.id) >= 0) {
+                foundSection.students.splice(foundSection.students.indexOf(foundUser.id), 1);
+              }
+              foundSection.save();
+              if (!foundUser.enrolledIn) {
+                foundUser.enrolledIn = [];
+              }
+              if (foundUser.enrolledIn.indexOf(section_id) >= 0) {
+                foundUser.enrolledIn.splice(foundUser.enrolledIn.indexOf(section_id), 1);
+              }
+              foundUser.save()
+              cb();
+            });
+          }
+        });
+      }
+    });
+  },
+
   classes: function(user_email, cb) {
     Auth.findOne({email: user_email}).exec(function findCB(authErr, foundAuth) {
       if (authErr) {
