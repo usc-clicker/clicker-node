@@ -57,7 +57,7 @@ module.exports = {
               }
               foundUser.save()
               delete foundSection.students;
-              cb(null, foundSection.toJson());
+              cb(null, foundSection.toJSON());
             });
           }
         });
@@ -90,7 +90,7 @@ module.exports = {
               }
               foundUser.save()
               delete foundSection.students;
-              cb(null, foundSection.toJson());
+              cb(null, foundSection.toJSON());
             });
           }
         });
