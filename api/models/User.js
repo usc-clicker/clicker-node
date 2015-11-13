@@ -144,16 +144,21 @@ module.exports = {
                       var quizResult = {};
                       quizResult.quiz_name = foundQuiz.quiz_name;
                       var numCorrect = 0.0;
-                      foundAnswerSet.answer_validity.forEach(function(valid) {
-                        if (valid)
-                          numCorrect++;
+                      async.each(foundAnswerSet.answers, function iterator(answer_id, answerCallback) {
+                        Answer.findOne({id: answer_id}).exec(function findCB(answerErr, foundAnswer) {
+                          if (foundAnswer && foundAnswer.answer_valid) {
+                            numCorrect++;
+                          }
+                          answerCallback();
+                        });
+                      }, function done(err) {
+                        var score = numCorrect / foundAnswerSet.answers.length;
+                        quizResult.score = score * 100;
+                        console.log("quizResult");
+                        console.log(quizResult);
+                        quizScores.push(quizResult);
+                        answerSetCallback();
                       });
-                      var score = numCorrect / foundAnswerSet.answer_validity.length;
-                      quizResult.score = score * 100;
-                      console.log("quizResult");
-                      console.log(quizResult);
-                      quizScores.push(quizResult);
-                      answerSetCallback();
                     }
                   });
                 } else {

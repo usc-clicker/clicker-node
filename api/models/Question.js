@@ -59,11 +59,20 @@ module.exports = {
             AnswerSet.findOne({quiz_id: quiz_id, user_id: foundAuth.id}).exec(function findCB(answersetErr, foundAnswerSet) {
               if (foundAnswerSet) {
                 console.log("found answer set, updating");
-                //Update answer set
-                foundAnswerSet.question_ids.push(question_id);
-                foundAnswerSet.answer_validity.push(correct);
-                foundAnswerSet.save();
-                cb(null, correct);
+                //Add answer and update answer set
+                Answer.create({
+                  question_id: question_id,
+                  answer_valid: correct,
+                  answer_choice: answer
+                }).exec(function createCB(createAnswerErr, createdAnswer) {
+                  if (createAnswerErr) {
+                    cb(createAnswerErr, null);
+                  } else {
+                    foundAnswerSet.answers.push(createdAnswer.id);
+                    foundAnswerSet.save();
+                    cb(null, createdAnswer.toJSON());
+                  }
+                });
               } else {
                 //Create answer set
                 console.log("creating new answer set");
@@ -74,25 +83,32 @@ module.exports = {
                   if (createAnswerSetErr) {
                     cb(createAnswerSetErr, null);
                   } else {
-                    //Callback with correct answer
-                    createdAnswerSet.question_ids.push(question_id);
-                    createdAnswerSet.answer_validity.push(correct);
-                    createdAnswerSet.save();
-                    cb(null, correct);
-                    //Save this answer set ID to the User model for future reference
-                    User.findOne({id: foundAuth.id}).exec(function findCB(userErr, foundUser) {
-                      if (userErr) {
-                        cb (userErr, null);
+                    Answer.create({
+                      question_id: question_id,
+                      answer_valid: correct,
+                      answer_choice: answer
+                    }).exec(function createCB(createAnswerErr, createdAnswer) {
+                      if (createAnswerErr) {
+                        cb(createAnswerErr, null);
                       } else {
-                        foundUser.answerSets.push(createdAnswerSet.id);
-                        foundUser.save();
+                        createdAnswerSet.answers.push(createdAnswer.id);
+                        createdAnswerSet.save();
+                        //Save this answer set ID to the User model for future reference
+                        User.findOne({id: foundAuth.id}).exec(function findCB(userErr, foundUser) {
+                          if (userErr) {
+                            cb (userErr, null);
+                          } else {
+                            foundUser.answerSets.push(createdAnswerSet.id);
+                            foundUser.save();
+                            cb(null, createdAnswer.toJSON());
+                          }
+                        });   
                       }
-                    });   
+                    });
                   }
                 });
               }
             });
-
           }
         });
       }

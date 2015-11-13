@@ -19,19 +19,7 @@ module.exports = {
 			required: true
 		},
 
-		question_ids: {
-			type: 'array',
-			defaultsTo: []
-		},
-
-		//Whether or not the Answer is correct
-		answer_validity: {
-			type: 'array',
-			defaultsTo: []
-		},
-
-		//The actual answer choice that they chose
-		answer_choice: {
+		answers: {
 			type: 'array',
 			defaultsTo: []
 		}
