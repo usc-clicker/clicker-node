@@ -28,11 +28,11 @@ module.exports = require('waterlock').actions.user({
 
 	enroll: function(req,res) {
 		if (req.body.user && req.body.section_id) {
-			User.enroll(req.body.user, req.body.section_id, function(error) {
+			User.enroll(req.body.user, req.body.section_id, function(error, result) {
 				if (error) {
 					return res.status(400).send(error);
 				} else {
-					return res.status(200).send("ok");
+					return res.status(200).send(result);
 				}
 			});
 		} else {
@@ -42,11 +42,11 @@ module.exports = require('waterlock').actions.user({
 
 	unenroll: function(req,res) {
 		if (req.body.user && req.body.section_id) {
-			User.unenroll(req.body.user, req.body.section_id, function(error) {
+			User.unenroll(req.body.user, req.body.section_id, function(error, result) {
 				if (error) {
 					return res.status(400).send(error);
 				} else {
-					return res.status(200).send("ok");
+					return res.status(200).send(result);
 				}
 			});
 		} else {

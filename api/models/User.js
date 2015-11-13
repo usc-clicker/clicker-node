@@ -56,7 +56,8 @@ module.exports = {
                 foundUser.enrolledIn.push(section_id);
               }
               foundUser.save()
-              cb(foundSection.toJson());
+              delete foundSection.students;
+              cb(null, foundSection.toJson());
             });
           }
         });
@@ -88,7 +89,8 @@ module.exports = {
                 foundUser.enrolledIn.splice(foundUser.enrolledIn.indexOf(section_id), 1);
               }
               foundUser.save()
-              cb();
+              delete foundSection.students;
+              cb(null, foundSection.toJson());
             });
           }
         });
