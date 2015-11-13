@@ -77,8 +77,8 @@ module.exports = {
               if (!foundSection.students) {
                 foundSection.students = [];
               }
-              if (foundSection.students.indexOf(foundUser.id) < 0) {
-                foundSection.students.push(foundUser.id);
+              if (foundSection.students.indexOf(foundUser.id) >= 0) {
+                foundSection.students.splice(foundSection.students.indexOf(foundUser.id), 1);
               }
               foundSection.save();
               if (!foundUser.enrolledIn) {
