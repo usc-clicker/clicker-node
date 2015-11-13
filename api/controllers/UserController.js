@@ -52,7 +52,7 @@ module.exports = require('waterlock').actions.user({
 		} else {
 			return res.status(400).send("Invalid request");
 		}
-	}
+	},
 
 	classes: function(req,res) {
 		if (req.query.user) {

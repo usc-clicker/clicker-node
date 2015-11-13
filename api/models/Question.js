@@ -17,6 +17,11 @@ module.exports = {
       required: true
     },
 
+    quiz_id: {
+      type: 'string',
+      required: true
+    },
+
     answer: {
       type: 'string',
       required: true

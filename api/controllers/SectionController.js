@@ -33,7 +33,7 @@ module.exports = {
 		} else {
 			return res.status(400).send("Invalid request");
 		}
-	}
+	},
 
 	statisticsQuestion: function(req,res) {
 		if (req.query.section_id, req.query.quiz_id, req.query.index) {
