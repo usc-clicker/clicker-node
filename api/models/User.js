@@ -56,7 +56,7 @@ module.exports = {
                 foundUser.enrolledIn.push(section_id);
               }
               foundUser.save()
-              cb();
+              cb(foundSection.toJson());
             });
           }
         });

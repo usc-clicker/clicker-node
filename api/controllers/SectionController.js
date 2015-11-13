@@ -21,6 +21,20 @@ module.exports = {
 		}
 	},
 
+	graphQuestion: function(req, res) {
+		if (req.query.section_id, req.query.quiz_id, req.query.question_id) {
+			Section.graphQuestion(req.query.section_id, req.query.quiz_id, req.querty.question_id, function(error, result) {
+				if (error) {
+					return res.status(400).send(error);
+				} else {
+					return res.send(200, response);
+				}
+			});
+		} else {
+			return res.status(400).send("Invalid request");
+		}
+	}
+
 	statisticsQuestion: function(req,res) {
 		if (req.query.section_id, req.query.quiz_id, req.query.index) {
 			Section.statisticsQuestion(req.query.section_id, req.query.quiz_id, req.query.index, function(error, correct) {
