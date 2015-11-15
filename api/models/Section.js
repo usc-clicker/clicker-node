@@ -6,6 +6,8 @@
 */
 
 var charts = require('quiche');
+var red500 = 'F44336';
+var yellow700 = 'FBC02D';
 
 module.exports = {
 
@@ -157,28 +159,49 @@ module.exports = {
             cb(error, null);
           } else {
             var bar = new charts('bar');
-            bar.setWidth(620);
+            bar.setWidth(625);
             bar.setHeight(480);
-            bar.setTitle(foundQuestion.question);
+            bar.title = {
+                          'text': foundQuestion.question,
+                          'color': '000000',
+                          'size': 20,
+                          'align': 'c'
+                        };
             bar.setBarWidth(20); 
-            bar.setBarSpacing(80); // 6 pixles between bars/groups
-            bar.setLegendBottom(); // Put legend at bottom
-            bar.setTransparentBackground(); // Make background transparent
+            bar.setBarSpacing(80); 
+            bar.setLegendHidden(); 
+            bar.setTransparentBackground(); 
 
             var counts = [];
             var labels = [];
-            for (var answer in response) {
-              counts.push(response[answer]);
-              labels.push(answer);
-            }
+            var colors = [];
 
-            bar.addData(counts, 'Response', 'F44336');
+            foundQuestion.choices.forEach(function (choice) {
+              if (response[choice]) {
+                counts.push(response[choice]);
+              } else {
+                counts.push(0);
+              }
+              labels.push(choice);
+              if (choice === foundQuestion.answer) {
+                colors.push(yellow700);
+              } else {
+                colors.push(red500);
+              }
+            });
+
+            bar.addData(counts, 'Response', colors.join('|'));
             bar.setAutoScaling(); // Auto scale y axis
             bar.addAxisLabels('x', labels);
 
-            var imageUrl = bar.getUrl(true); // First param controls http vs. https
+            var imageUrl = bar.getUrl(true);
 
-            cb(null, {graphUrl: imageUrl.split('%2B').join('+')});
+            cb(null, {
+              graphUrl: imageUrl.split('%2B').join('+'),
+              counts: counts,
+              labels: labels,
+              colors: colors.join('|')
+            });
           }
         });
       }
