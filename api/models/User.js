@@ -12,8 +12,9 @@ module.exports = {
 
   attributes: require('waterlock').models.user.attributes({
     
-    student_id: {
-      type: 'string'
+    usc_id: {
+      type: 'string',
+      required: true
     },
 
     enrolledIn: {
@@ -24,7 +25,7 @@ module.exports = {
     answerSets: {
       type: 'array',
       defaultsTo: []
-    }
+    },
     
   }),
   
