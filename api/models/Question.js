@@ -121,18 +121,26 @@ module.exports = {
       if (questionErr) {
         cb(questionErr);
       } else if (foundQuestion) {
-          Parse.Push.send({
-            channels: [ "Students" ],
-            data: foundQuestion.toJSON()
-          }, {
-            success: function() {
-              return cb();
-            },
-            error: function(error) {
-              console.log("error: Parse.Push.send code: " + error.code + " msg: " + error.message);
-              return cb(error);
-            }
-          });
+        Quiz.findOne({id: foundQuestion.quiz_id}).exec(function findCB(quizErr, foundQuiz) {
+          if (quizErr) {
+            cb(quizErr);
+          } else if (foundQuiz) {
+            Parse.Push.send({
+              channels: [ foundQuiz.section_id ],
+              data: foundQuestion.toJSON()
+            }, {
+              success: function() {
+                return cb();
+              },
+              error: function(error) {
+                console.log("error: Parse.Push.send code: " + error.code + " msg: " + error.message);
+                return cb(error);
+              }
+            });
+          } else {
+            cb("Quiz not found");
+          }
+        });
       } else {
         cb("Question not found");
       }
