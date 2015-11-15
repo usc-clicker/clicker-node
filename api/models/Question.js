@@ -124,6 +124,7 @@ module.exports = {
         cb(questionErr);
       } else if (foundQuestion) {
         foundQuestion.show_answers = showAnswerChoices;
+        foundQuestion.expiration = Date.now() + foundQuestion.time_limit;
         Quiz.findOne({id: foundQuestion.quiz_id}).exec(function findCB(quizErr, foundQuiz) {
           if (quizErr) {
             cb(quizErr);
