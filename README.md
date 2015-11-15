@@ -129,7 +129,7 @@ Returns `200` if login successful; `403` if email or password is invalid
     </tbody>
 </table>
 
-`GET /user/`
+`GET /user/stats`
 
 #####Parameters
 
@@ -144,10 +144,16 @@ Returns `200` if login successful; `403` if email or password is invalid
     </thead>
     <tbody>
         <tr>
-            <td><code>id</code></td>
+            <td><code>user</code></td>
+            <td>yes</td>
+            <td>string</td>
+            <td>Email address of user</td>
+        </tr>
+        <tr>
+            <td><code>section_id</code></td>
             <td>optional</td>
             <td>integer</td>
-            <td>ID of user; omitting this will return all users</td>
+            <td>Section ID to return stats for; if ommitted, stats for all quizzes will be returned.</td>
         </tr>
     </tbody>
 </table>

@@ -125,7 +125,7 @@ module.exports = {
     });
   },
 
-  stats: function (user_email, cb) {
+  stats: function (user_email, section_id, cb) {
     Auth.findOne({email: user_email}).exec(function findCB(authErr, foundAuth) {
       if (authErr || !foundAuth) {
         cb(authErr, null);
@@ -140,7 +140,7 @@ module.exports = {
               AnswerSet.findOne({id: answer_set_id}).exec(function findCB(answerSetErr, foundAnswerSet) {
                 if (foundAnswerSet) {
                   Quiz.findOne({id: foundAnswerSet.quiz_id}).exec(function findCB(quizErr, foundQuiz) {
-                    if (foundQuiz) {
+                    if (foundQuiz && (!section_id || foundQuiz.section_id == section_id)) {
                       var quizResult = {};
                       quizResult.quiz_name = foundQuiz.quiz_name;
                       var numCorrect = 0.0;
@@ -159,6 +159,8 @@ module.exports = {
                         quizScores.push(quizResult);
                         answerSetCallback();
                       });
+                    } else {
+                      answerSetCallback();
                     }
                   });
                 } else {
