@@ -6,6 +6,8 @@
 */
 
 var Parse = require('parse/node');
+var showAnswerChoices = false;
+
 Parse.initialize(process.env['PARSE_APPLICATION_ID'], process.env['PARSE_JAVASCRIPT_KEY']);
 
 module.exports = {
@@ -121,6 +123,7 @@ module.exports = {
       if (questionErr) {
         cb(questionErr);
       } else if (foundQuestion) {
+        foundQuestion.show_answers = showAnswerChoices;
         Quiz.findOne({id: foundQuestion.quiz_id}).exec(function findCB(quizErr, foundQuiz) {
           if (quizErr) {
             cb(quizErr);
