@@ -126,7 +126,7 @@ module.exports = {
             cb(quizErr);
           } else if (foundQuiz) {
             Parse.Push.send({
-              channels: [ foundQuiz.section_id ],
+              channels: [ 's' + foundQuiz.section_id ],
               data: foundQuestion.toJSON()
             }, {
               success: function() {
