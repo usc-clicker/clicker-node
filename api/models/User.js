@@ -127,7 +127,7 @@ module.exports = {
 
   stats: function (user_email, cb) {
     Auth.findOne({email: user_email}).exec(function findCB(authErr, foundAuth) {
-      if (authErr) {
+      if (authErr || !foundAuth) {
         cb(authErr, null);
       } else {
         User.findOne({id: foundAuth.id}).exec(function findCB(userErr, foundUser) {

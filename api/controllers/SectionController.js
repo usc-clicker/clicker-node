@@ -7,6 +7,20 @@
 
 module.exports = {
 
+	graphQuiz: function(req,res) {
+		if (req.query.section_id, req.query.quiz_id) {
+			Section.graphQuiz(req.query.section_id, req.query.quiz_id, function (error, result) {
+				if(error) {
+					return res.status(400).send(error);
+				} else {
+					return res.send(200, result);
+				}
+			});
+		} else {
+			return res.status(400).send("Invalid request");
+		}
+	},
+
 	statisticsQuiz: function(req,res) {
 		if (req.query.section_id, req.query.quiz_id) {
 			Section.statisticsQuiz(req.query.section_id, req.query.quiz_id, function (error, correct) {
@@ -23,11 +37,11 @@ module.exports = {
 
 	graphQuestion: function(req, res) {
 		if (req.query.section_id, req.query.quiz_id, req.query.question_id) {
-			Section.graphQuestion(req.query.section_id, req.query.quiz_id, req.querty.question_id, function (error, result) {
+			Section.graphQuestion(req.query.section_id, req.query.quiz_id, req.query.question_id, function (error, result) {
 				if (error) {
 					return res.status(400).send(error);
 				} else {
-					return res.send(200, response);
+					return res.send(200, result);
 				}
 			});
 		} else {

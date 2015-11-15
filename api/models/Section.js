@@ -42,18 +42,23 @@ module.exports = {
     students: {
       type: 'array',
       defaultsTo: []
+    },
+
+    quizzes: {
+      type: 'array',
+      defaultsTo: []
     }
 
   },
 
   statisticsQuiz: function (section_id, quiz_id, cb) {
     Quiz.findOne({id: quiz_id}).exec(function findQuiz(quizErr, foundQuiz) {
-      if (quizErr) {
+      if (quizErr || !foundQuiz) {
         cb(quizErr, null);
-      } else {
+      } else if (foundQuiz) {
         var quizResponse = [];
         async.each(foundQuiz.questionSet, function iterator(question_id, questionCallback) {
-          statisticsQuestion(section_id, quiz_id, question_id, function (error, response) {
+          Section.statisticsQuestion(section_id, quiz_id, question_id, function (error, response) {
             if (error) {
               cb(error, null);
             } else {
@@ -69,27 +74,38 @@ module.exports = {
   },
 
   statisticsQuestion: function(section_id, quiz_id, question_id, cb) {
-    Section.findOne({id: section_id}).exec(function findSection(sectionErr, foundSection) {
-      if(sectionErr) {
+    Section.findOne({section_id: section_id}).exec(function findSection(sectionErr, foundSection) {
+      if(sectionErr || !foundSection) {
         cb(sectionErr, null);
-      } else {
+      } else if (foundSection) {
+        console.log("foundSection");
+        console.log(foundSection);
         var answerResponse = {};
         async.each(foundSection.students, function iterator(student_id, studentCallback) {
           User.findOne({id: student_id}).exec(function findStudent(studentErr, foundStudent) {
             if (studentErr) {
               cb(studentErr, null);
             } else {
-              AnswerSet.find({quiz_id: quiz_id, user_id: foundStudent.id}).exec(function findAnswerSet(answerSetErr, foundAnswerSet) {
-                if (answerSetErr) {
+              console.log("foundStudent");
+              console.log(foundStudent);
+              AnswerSet.findOne({quiz_id: quiz_id, user_id: foundStudent.id}).exec(function findAnswerSet(answerSetErr, foundAnswerSet) {
+                if (answerSetErr || !foundAnswerSet) {
                   cb(answerSetErr, null);
-                } else {
+                } else if (foundAnswerSet.answers) {
+                  console.log("foundAnswerSet");
+                  console.log(foundAnswerSet);
                   async.each(foundAnswerSet.answers, function iterator(answer_id, answerCallback) {
-                    Answer.findOne({id: answer_id}).exec(function findAnswer(answerErr, foudAnswer) {
-                      if (answerErr) {
+                    Answer.findOne({id: answer_id}).exec(function findAnswer(answerErr, foundAnswer) {
+                      if (answerErr || !foundAnswer) {
                         cb(answerErr);
                       } else if (foundAnswer.question_id == question_id) {
+                        console.log("foundAnswer");
+                        console.log(foundAnswer);
+                        console.log("looking for: " + question_id);
                         if (foundAnswer.answer_choice in answerResponse) {
-                          answerResponse[foundAnswer.answer_choice] = foundAnswer.answer_choice[foundAnswer.answer_choice] +1;
+                          answerResponse[foundAnswer.answer_choice] = answerResponse[foundAnswer.answer_choice] + 1;
+                        } else {
+                          answerResponse[foundAnswer.answer_choice] = 1;
                         }
                       }
                       answerCallback();
@@ -108,34 +124,63 @@ module.exports = {
     });
   },
 
+  graphQuiz: function (section_id, quiz_id, cb) {
+    Quiz.findOne({id: quiz_id}).exec(function findQuiz(quizErr, foundQuiz) {
+      if (quizErr || !foundQuiz) {
+        cb(quizErr, null);
+      } else if (foundQuiz) {
+        var quizResponse = [];
+        async.each(foundQuiz.questionSet, function iterator(question_id, questionCallback) {
+          Section.graphQuestion(section_id, quiz_id, question_id, function (error, response) {
+            if (error) {
+              cb(error, null);
+            } else {
+              quizResponse.push(response);
+              questionCallback();
+            }
+          });
+        }, function done(err) {
+          cb(null, quizResponse);
+        });
+      }
+    });
+  },
+
   graphQuestion: function(section_id, quiz_id, question_id, cb) {
 
-    statisticsQuestion(section_id, quiz_id, question_id, function (error, response) {
-      if (error) {
-        cb(error, null);
+    Question.findOne({id: question_id}).exec(function findQuestion(questionErr, foundQuestion) {
+      if (questionErr || !foundQuestion) {
+        cb(questionErr, null);
       } else {
-        var bar = new charts('bar');
-        bar.setWidth(400);
-        bar.setHeight(265);
-        bar.setTitle('QUESTION GOES HERE');
-        bar.setBarStacked(); // Stacked chart
-        bar.setBarWidth(0); 
-        bar.setBarSpacing(6); // 6 pixles between bars/groups
-        bar.setLegendBottom(); // Put legend at bottom
-        bar.setTransparentBackground(); // Make background transparent
+        Section.statisticsQuestion(section_id, quiz_id, question_id, function (error, response) {
+          if (error) {
+            cb(error, null);
+          } else {
+            var bar = new charts('bar');
+            bar.setWidth(620);
+            bar.setHeight(480);
+            bar.setTitle(foundQuestion.question);
+            bar.setBarWidth(20); 
+            bar.setBarSpacing(80); // 6 pixles between bars/groups
+            bar.setLegendBottom(); // Put legend at bottom
+            bar.setTransparentBackground(); // Make background transparent
 
-        bar.addData([19, 19, 21, 14, 19, 11, 10, 18, 19, 30], 'Foo', 'FF0000');
-        bar.addData([4, 3, 2, 3, 0, 0, 3, 4, 2, 2], 'bar', '0000FF');
-        bar.addData([10, 8, 2, 1, 18, 9, 20, 21, 19, 11], 'bin', '008000');
-        bar.addData([2, 1, 1, 1, 1, 7, 3, 6, 2, 7], 'bash', '00FF00');
-        bar.addData([1, 0, 0, 1, 2, 1, 0, 0, 0, 0], 'blah', '307000');     
+            var counts = [];
+            var labels = [];
+            for (var answer in response) {
+              counts.push(response[answer]);
+              labels.push(answer);
+            }
 
-        bar.setAutoScaling(); // Auto scale y axis
-        bar.addAxisLabels('x', ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']);
+            bar.addData(counts, 'Response', 'F44336');
+            bar.setAutoScaling(); // Auto scale y axis
+            bar.addAxisLabels('x', labels);
 
-        var imageUrl = bar.getUrl(true); // First param controls http vs. https
+            var imageUrl = bar.getUrl(true); // First param controls http vs. https
 
-        cb(null, {graphUrl: imageUrl});
+            cb(null, {graphUrl: imageUrl.split('%2B').join('+')});
+          }
+        });
       }
     });
   }

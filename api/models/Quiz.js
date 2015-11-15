@@ -16,7 +16,12 @@ module.exports = {
   	questionSet: {
   		type: 'array',
   		defaultsTo: []
-  	}
+  	},
+
+    section_id: {
+      type: 'string',
+      required: true
+    }
   },
 
   add: function(quiz_id, question_id, cb) {

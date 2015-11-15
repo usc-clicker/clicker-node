@@ -1,16 +1,36 @@
 <script>
 
+function deleteQuiz(id) {
+  io.socket.delete('/quiz/' + id, function (res) {
+    window.location.reload(true);
+  });
+  return true;
+};
+
+function deleteSection(id) {
+  io.socket.delete('/section/' + id, function (res) {
+    window.location.reload(true);
+  });
+  return true;
+};
+
+function deleteQuestion(id) {
+  io.socket.delete('/question/' + id, function (res) {
+    window.location.reload(true);
+  });
+  return true;
+};
+
 $(document).ready(function () {
+  
   $("#quizzes").hide();
   $("#sections").hide();
-  var questionTemplate = Handlebars.compile($("#question-template").html());
-  var quizTemplate = Handlebars.compile($("#quiz-template").html());
-  var sectionTemplate = Handlebars.compile($("#section-template").html());
-  var pageTitle = $("#title");
+  $("#reports").hide();
 
   $("#quizzesItem").click(function() {
     $("#questions").hide();
     $("#sections").hide();
+    $("#reports").hide();
     $("#quizzes").show();
     pageTitle.text("Quizzes");
     return false;
@@ -19,6 +39,7 @@ $(document).ready(function () {
   $("#questionsItem").click(function() {
     $("#quizzes").hide();
     $("#sections").hide();
+    $("#reports").hide();
     $("#questions").show();
     pageTitle.text("Questions");
     return false;
@@ -27,14 +48,30 @@ $(document).ready(function () {
   $("#sectionsItem").click(function() {
     $("#quizzes").hide();
     $("#questions").hide();
+    $("#reports").hide();
     $("#sections").show();
     pageTitle.text("Sections");
     return false;
   });
 
+  $("#reportsItem").click(function() {
+    $("#quizzes").hide();
+    $("#questions").hide();
+    $("#sections").hide();
+    $("#reports").show();
+    pageTitle.text("Reports");
+    return false;
+  });
+
+  var questionTemplate = Handlebars.compile($("#question-template").html());
+  var quizTemplate = Handlebars.compile($("#quiz-template").html());
+  var sectionTemplate = Handlebars.compile($("#section-template").html());
+  var reportTemplate = Handlebars.compile($("#report-template").html());
+  var pageTitle = $("#title");
+
   io.socket.get('/quiz/', function (quizzes) {
       $("#quizzes").empty();
-      quizzes.forEach(function(quiz) {
+      quizzes.forEach(function (quiz) {
         var questions = [];
         var quizHtml = '';
         async.each(quiz.questionSet, function iterator(question_id, questionCallback) {
@@ -60,7 +97,8 @@ $(document).ready(function () {
 
   io.socket.get('/section/', function (sections) {
       $("#sections").empty();
-      sections.forEach(function(section) {
+      $("#reports").empty();
+      sections.forEach(function (section) {
         var students = [];
         var sectionHtml = '';
         async.each(section.students, function iterator(student_id, studentCallback) {
@@ -73,6 +111,22 @@ $(document).ready(function () {
             section.students = students;
             sectionHtml += sectionTemplate(section);
             $("#sections").append(sectionHtml);
+
+            if (section.quizzes && section.quizzes.length > 0) {
+              section.quizzes.forEach(function (quiz_id) {
+                io.socket.get('/quiz/' + quiz_id, function (quiz) {
+                  console.log(quiz);
+                  io.socket.get('/section/graphQuiz?section_id='+section.section_id+'&quiz_id='+quiz.id, function (graphs) {
+                    console.log(graphs);
+                    if (graphs.length > 0) {
+                      quiz.graphs = graphs;
+                      var reportHtml = reportTemplate(quiz);
+                      $("#reports").append(reportHtml);
+                    }
+                  });
+                });
+              });
+            }
           }
         });
       });
@@ -85,7 +139,7 @@ $(document).ready(function () {
   <div class="mdl-cell mdl-cell--4-col">
     <div class="mdl-card mdl-shadow--2dp">
       <div class="mdl-card__title">
-        {{question}}
+        <b class="id">{{id}}</b> {{question}}
       </div>
       <div class="mdl-card__supporting-text">
         <ul>
@@ -96,7 +150,7 @@ $(document).ready(function () {
       </div>
       <div class="mdl-card__actions mdl-card--border">
         <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Edit</a>
-        <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Delete</a>
+        <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onclick="return deleteQuestion({{id}});">Delete</a>
       </div>
     </div>
   </div>
@@ -106,7 +160,7 @@ $(document).ready(function () {
   <div class="mdl-cell mdl-cell--4-col">
     <div class="mdl-card mdl-shadow--2dp">
       <div class="mdl-card__title">
-        {{quiz_name}}
+        <b class="id">{{id}}</b> {{quiz_name}}
       </div>
       <div class="mdl-card__supporting-text">
         <ul>
@@ -117,10 +171,24 @@ $(document).ready(function () {
       </div>
       <div class="mdl-card__actions mdl-card--border">
         <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Edit</a>
-        <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Delete</a>
+        <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onclick="return deleteQuiz({{id}});">Delete</a>
       </div>
     </div>
   </div>
+</script>
+
+<script type="text/x-handlebars" id="report-template">
+      <div class="mdl-card__title">
+          {{quiz_name}}
+          <br><br>
+          Section {{section_id}}
+      </div>
+      <div class="mdl-card__supporting-text">
+        {{#each graphs}}
+        <img class="graph" src={{this.graphUrl}} />
+        <br><br>
+        {{/each}}
+      </div>
 </script>
 
 <script type="text/x-handlebars" id="section-template">
@@ -144,7 +212,7 @@ $(document).ready(function () {
       </div>
       <div class="mdl-card__actions mdl-card--border">
         <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Edit</a>
-        <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Delete</a>
+        <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onclick="return deleteSection({{id}});">Delete</a>
       </div>
     </div>
   </div>
@@ -194,7 +262,8 @@ $(document).ready(function () {
         <i class="mdl-color-text--yellow-700 material-icons" role="presentation">help</i>Questions</a>
       <a class="mdl-navigation__link" href="" id="sectionsItem">
         <i class="mdl-color-text--yellow-700 material-icons" role="presentation">class</i>Sections</a>
-      <a class="mdl-navigation__link" href=""><i class="mdl-color-text--yellow-700 material-icons" role="presentation">insert_chart</i>Reports</a>
+      <a class="mdl-navigation__link" href="" id="reportsItem">
+        <i class="mdl-color-text--yellow-700 material-icons" role="presentation">insert_chart</i>Reports</a>
     </nav>
   </div>
   <main class="mdl-layout__content mdl-color--grey-100">
@@ -202,6 +271,7 @@ $(document).ready(function () {
         <div class="mdl-grid" id="questions"></div>
         <div class="mdl-grid" id="quizzes"></div>
         <div class="mdl-grid" id="sections"></div>
+        <div class="mdl-grid" id="reports"></div>
         <a href="/question/create"><button class="clicker-fab mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
           <i class="material-icons">add</i>
         </button></a>

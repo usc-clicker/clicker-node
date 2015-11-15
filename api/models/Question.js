@@ -52,9 +52,9 @@ module.exports = {
         var correct = (answer == foundQuestion.answer);
 
         Auth.findOne({email: user_email}).exec(function findCB(authErr, foundAuth) {
-          if (authErr) {
+          if (authErr || !foundAuth) {
             cb(authErr, null);
-          } else {
+          } else if (foundAuth) {
             console.log(foundAuth.id)
             AnswerSet.findOne({quiz_id: quiz_id, user_id: foundAuth.id}).exec(function findCB(answersetErr, foundAnswerSet) {
               if (foundAnswerSet) {

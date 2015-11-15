@@ -14,7 +14,7 @@ $(document).ready(function () {
     var question = {};
     question.question = $("#question").val();
     question.choices = choices;
-    question.time_limit = parseInt($("#time_limit").val());
+    question.time_limit = 1000*parseInt($("#time_limit").val());
     question.type="multiple-choice";
     question.answer = $("#correct_answer").val();
 
@@ -89,14 +89,7 @@ $(document).ready(function () {
       </div>
     </header>
     <nav class="clicker-navigation mdl-navigation mdl-color--red-700">
-      <a class="mdl-navigation__link" href=""><i class="mdl-color-text--yellow-700 material-icons" role="presentation">home</i>Home</a>
-      <a class="mdl-navigation__link" href="" id="quizzesItem">
-        <i class="mdl-color-text--yellow-700 material-icons" role="presentation">list</i>Quizzes</a>
-      <a class="mdl-navigation__link" href="" id="questionsItem">
-        <i class="mdl-color-text--yellow-700 material-icons" role="presentation">help</i>Questions</a>
-      <a class="mdl-navigation__link" href="" id="sectionsItem">
-        <i class="mdl-color-text--yellow-700 material-icons" role="presentation">class</i>Sections</a>
-      <a class="mdl-navigation__link" href=""><i class="mdl-color-text--yellow-700 material-icons" role="presentation">insert_chart</i>Reports</a>
+      <a class="mdl-navigation__link" href="/"><i class="mdl-color-text--yellow-700 material-icons" role="presentation">home</i>Home</a>
     </nav>
   </div>
   <main class="mdl-layout__content mdl-color--grey-100">
