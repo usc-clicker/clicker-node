@@ -155,6 +155,7 @@ module.exports = {
         cb(questionErr, null);
       } else {
         Section.statisticsQuestion(section_id, quiz_id, question_id, function (error, response) {
+          console.log("statisticsQuestion response: " + response);
           if (error) {
             cb(error, null);
           } else {
