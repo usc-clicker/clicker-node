@@ -35,30 +35,40 @@ module.exports = {
   enroll: function (user_email, section_id, cb) {
 
     Auth.findOne({email: user_email}).exec(function findCB(authErr, foundAuth) {
-      if (authErr) {
+      if (authErr || !foundAuth) {
         cb(authErr, null);
       } else {
         User.findOne({id: foundAuth.id}).exec(function findCB(userErr, foundUser) {
-          if (userErr) {
+          if (userErr || !foundUser) {
             cb(userErr, null);
           } else {
             Section.findOne({section_id: section_id}).exec(function findCB(sectionErr, foundSection) {
-              if (!foundSection.students) {
-                foundSection.students = [];
+              if (sectionErr || !foundSection) {
+                cb(sectionErr, null);
+              } else {
+                if (!foundSection.quizzes) {
+                  foundSection.quizzes = [];
+                }
+                if (!foundSection.students) {
+                  foundSection.students = [];
+                }
+                if (foundSection.students.indexOf(foundUser.id) < 0) {
+                  foundSection.students.push(foundUser.id);
+                }
+                foundSection.save();
+                if (!foundUser.enrolledIn) {
+                  foundUser.enrolledIn = [];
+                }
+                if (foundUser.enrolledIn.indexOf(section_id) < 0) {
+                  foundUser.enrolledIn.push(section_id);
+                }
+                if (!foundUser.usc_id) {
+                  foundUser.usc_id = 0123456789;
+                }
+                foundUser.save()
+                delete foundSection.students;
+                cb(null, foundSection.toJSON());
               }
-              if (foundSection.students.indexOf(foundUser.id) < 0) {
-                foundSection.students.push(foundUser.id);
-              }
-              foundSection.save();
-              if (!foundUser.enrolledIn) {
-                foundUser.enrolledIn = [];
-              }
-              if (foundUser.enrolledIn.indexOf(section_id) < 0) {
-                foundUser.enrolledIn.push(section_id);
-              }
-              foundUser.save()
-              delete foundSection.students;
-              cb(null, foundSection.toJSON());
             });
           }
         });
@@ -68,7 +78,7 @@ module.exports = {
 
   unenroll: function (user_email, section_id, cb) {
     Auth.findOne({email: user_email}).exec(function findCB(authErr, foundAuth) {
-      if (authErr) {
+      if (authErr || !foundAuth) {
         cb(authErr, null);
       } else {
         User.findOne({id: foundAuth.id}).exec(function findCB(userErr, foundUser) {
@@ -76,22 +86,32 @@ module.exports = {
             cb(userErr, null);
           } else {
             Section.findOne({section_id: section_id}).exec(function findCB(sectionErr, foundSection) {
-              if (!foundSection.students) {
-                foundSection.students = [];
+              if (sectionErr || !foundSection) {
+                cb (sectionErr, null);
+              } else {
+                if (!foundSection.quizzes) {
+                  foundSection.quizzes = [];
+                }
+                if (!foundSection.students) {
+                  foundSection.students = [];
+                }
+                if (foundSection.students.indexOf(foundUser.id) >= 0) {
+                  foundSection.students.splice(foundSection.students.indexOf(foundUser.id), 1);
+                }
+                foundSection.save();
+                if (!foundUser.enrolledIn) {
+                  foundUser.enrolledIn = [];
+                }
+                if (foundUser.enrolledIn.indexOf(section_id) >= 0) {
+                  foundUser.enrolledIn.splice(foundUser.enrolledIn.indexOf(section_id), 1);
+                }
+                if (!foundUser.usc_id) {
+                  foundUser.usc_id = 0123456789;
+                }
+                foundUser.save()
+                delete foundSection.students;
+                cb(null, foundSection.toJSON());
               }
-              if (foundSection.students.indexOf(foundUser.id) >= 0) {
-                foundSection.students.splice(foundSection.students.indexOf(foundUser.id), 1);
-              }
-              foundSection.save();
-              if (!foundUser.enrolledIn) {
-                foundUser.enrolledIn = [];
-              }
-              if (foundUser.enrolledIn.indexOf(section_id) >= 0) {
-                foundUser.enrolledIn.splice(foundUser.enrolledIn.indexOf(section_id), 1);
-              }
-              foundUser.save()
-              delete foundSection.students;
-              cb(null, foundSection.toJSON());
             });
           }
         });
