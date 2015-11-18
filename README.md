@@ -42,7 +42,7 @@ Return `200` if account creation successful; `403` if registration failed (email
             <td>Password of the user. </td>
         </tr>
         <tr>
-            <td><code>student_id</code></td>
+            <td><code>usc_id</code></td>
             <td>yes</td>
             <td>integer</td>
             <td>USC student id</td>

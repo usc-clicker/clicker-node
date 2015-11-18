@@ -177,7 +177,7 @@ module.exports = {
             var colors = [];
 
             foundQuestion.choices.forEach(function (choice) {
-              if (response[choice]) {
+              if (response && response[choice]) {
                 counts.push(response[choice]);
               } else {
                 counts.push(0);
