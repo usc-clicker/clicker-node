@@ -99,7 +99,7 @@ module.exports = {
                   async.each(foundAnswerSet.answers, function iterator(answer_id, answerCallback) {
                     Answer.findOne({id: answer_id}).exec(function findAnswer(answerErr, foundAnswer) {
                       if (answerErr || !foundAnswer) {
-                        cb(answerErr);
+                        cb(answerErr, null);
                       } else if (foundAnswer.question_id == question_id) {
                         console.log("foundAnswer");
                         console.log(foundAnswer);
@@ -177,7 +177,7 @@ module.exports = {
             var colors = [];
 
             foundQuestion.choices.forEach(function (choice) {
-              if (response && response[choice]) {
+              if (response[choice]) {
                 counts.push(response[choice]);
               } else {
                 counts.push(0);
