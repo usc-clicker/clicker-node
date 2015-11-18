@@ -85,15 +85,11 @@ module.exports = {
         var answerResponse = {};
         async.each(foundSection.students, function iterator(student_id, studentCallback) {
           User.findOne({id: student_id}).exec(function findStudent(studentErr, foundStudent) {
-            if (studentErr) {
-              cb(studentErr, null);
-            } else if (foundStudent) {
+            if (foundStudent) {
               console.log("foundStudent");
               console.log(foundStudent);
               AnswerSet.findOne({quiz_id: quiz_id, user_id: foundStudent.id}).exec(function findAnswerSet(answerSetErr, foundAnswerSet) {
-                if (answerSetErr || !foundAnswerSet) {
-                  cb(answerSetErr, null);
-                } else if (foundAnswerSet.answers) {
+                if (foundAnswerSet && foundAnswerSet.answers) {
                   console.log("foundAnswerSet");
                   console.log(foundAnswerSet);
                   async.each(foundAnswerSet.answers, function iterator(answer_id, answerCallback) {
@@ -115,6 +111,8 @@ module.exports = {
                   }, function done(err) {
                       studentCallback();
                   });
+                } else {
+                  studentCallback();
                 }
               });
             } else {
