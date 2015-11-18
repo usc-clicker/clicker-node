@@ -85,21 +85,17 @@ module.exports = {
         var answerResponse = {};
         async.each(foundSection.students, function iterator(student_id, studentCallback) {
           User.findOne({id: student_id}).exec(function findStudent(studentErr, foundStudent) {
-            if (studentErr) {
-              cb(studentErr, null);
-            } else {
+            if (foundStudent) {
               console.log("foundStudent");
               console.log(foundStudent);
               AnswerSet.findOne({quiz_id: quiz_id, user_id: foundStudent.id}).exec(function findAnswerSet(answerSetErr, foundAnswerSet) {
-                if (answerSetErr || !foundAnswerSet) {
-                  cb(answerSetErr, null);
-                } else if (foundAnswerSet.answers) {
+                if (foundAnswerSet && foundAnswerSet.answers) {
                   console.log("foundAnswerSet");
                   console.log(foundAnswerSet);
                   async.each(foundAnswerSet.answers, function iterator(answer_id, answerCallback) {
                     Answer.findOne({id: answer_id}).exec(function findAnswer(answerErr, foundAnswer) {
                       if (answerErr || !foundAnswer) {
-                        cb(answerErr);
+                        cb(answerErr, null);
                       } else if (foundAnswer.question_id == question_id) {
                         console.log("foundAnswer");
                         console.log(foundAnswer);
@@ -115,8 +111,12 @@ module.exports = {
                   }, function done(err) {
                       studentCallback();
                   });
+                } else {
+                  studentCallback();
                 }
               });
+            } else {
+              studentCallback();
             }
           });
         }, function done(err) {
@@ -155,7 +155,9 @@ module.exports = {
         cb(questionErr, null);
       } else {
         Section.statisticsQuestion(section_id, quiz_id, question_id, function (error, response) {
-          if (error) {
+          console.log("statisticsQuestion response");
+          console.log(response);
+          if (error || !response) {
             cb(error, null);
           } else {
             var bar = new charts('bar');

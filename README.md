@@ -42,7 +42,7 @@ Return `200` if account creation successful; `403` if registration failed (email
             <td>Password of the user. </td>
         </tr>
         <tr>
-            <td><code>student_id</code></td>
+            <td><code>usc_id</code></td>
             <td>yes</td>
             <td>integer</td>
             <td>USC student id</td>
@@ -108,6 +108,35 @@ Returns `200` if login successful; `403` if email or password is invalid
             <td>yes</td>
             <td>integer</td>
             <td>Section ID of the section to be enrolled in</td>
+        </tr>
+    </tbody>
+</table>
+
+`POST /user/unenroll`
+
+#####Parameters
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Required?</th>
+            <th width="50">Type</th>
+            <th width=100%>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>user</code></td>
+            <td>yes</td>
+            <td>string</td>
+            <td>User email</td>
+        </tr>
+        <tr>
+            <td><code>section_id</code></td>
+            <td>yes</td>
+            <td>integer</td>
+            <td>Section ID of the section to be unenrolled from</td>
         </tr>
     </tbody>
 </table>
