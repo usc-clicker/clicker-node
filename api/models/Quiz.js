@@ -73,6 +73,7 @@ module.exports = {
         async.each(quizFound.questionSet, function iterator(question_id, questionCallback) {
           Question.findOne({id: question_id}).exec(function findCB(questionErr, foundQuestion) {
             if (foundQuestion) {
+              foundQuestion.section_id = quizFound.section_id;
               questions.push(foundQuestion);
             }
             questionCallback();
