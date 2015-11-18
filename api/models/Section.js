@@ -87,7 +87,7 @@ module.exports = {
           User.findOne({id: student_id}).exec(function findStudent(studentErr, foundStudent) {
             if (studentErr) {
               cb(studentErr, null);
-            } else {
+            } else if (foundStudent) {
               console.log("foundStudent");
               console.log(foundStudent);
               AnswerSet.findOne({quiz_id: quiz_id, user_id: foundStudent.id}).exec(function findAnswerSet(answerSetErr, foundAnswerSet) {
@@ -117,6 +117,8 @@ module.exports = {
                   });
                 }
               });
+            } else {
+              studentCallback();
             }
           });
         }, function done(err) {
@@ -155,8 +157,9 @@ module.exports = {
         cb(questionErr, null);
       } else {
         Section.statisticsQuestion(section_id, quiz_id, question_id, function (error, response) {
-          console.log("statisticsQuestion response: " + response);
-          if (error) {
+          console.log("statisticsQuestion response");
+          console.log(response);
+          if (error || !response) {
             cb(error, null);
           } else {
             var bar = new charts('bar');
