@@ -6,7 +6,7 @@
 */
 
 var Parse = require('parse/node');
-var showAnswerChoices = false;
+var showAnswerChoices = true;
 
 Parse.initialize(process.env['PARSE_APPLICATION_ID'], process.env['PARSE_JAVASCRIPT_KEY']);
 
