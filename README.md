@@ -6,8 +6,36 @@ Clone this repo, then run `npm install`
 
 Start the app with `sails lift` or `node app.js`
 
+## Development and Production Environments
 
-## API
+There are several differences to be aware of when running the node app locally for development purposes and in production.
+
+When running **locally**, make sure that the database connection in `config/env/development.js` is commented out. This will ensure that Sails uses a local disk database and doesn't try to connect to the production MySQL database.
+
+When running in the **production environment** (on the server) **_without critical user data, while making changes to database schema_**, Sails still must be run in a `development` mode to allow database migration to occur. In this case, the database connection in `config/env/development.js` should be uncommented so that Sails uses the production MySQL database, but allows database migration to occur (Sails automatically updates the MySQL database schema to reflect changes made in the modules).
+
+When running in a **production environment _with real user data, when the database schema is stable_**, Sails should be run in production mode by running the command `sails lift --prod`. Since this is currently not the configuration being used since the schema has continued to evolve during development, the cron task that launches the node app with `forever` should be updated accordingly to include the `--prod` flag.  To do this, run `crontab -e` while logged into the server over SSH as user `csci477`.
+
+## Production Environment Details
+
+The node app is currently deployed to a server managed by CSCI 401 course staff.  For more details and SSH login credentials, contact the instructor.
+
+A few notes on the current configuration:
+
+* [forever]([https://github.com/foreverjs/forever) is used to manage the node app on the server. This is a tool that automatically restarts node applications when they crash, to ensure the server keeps running. 
+* The node app runs on port 1337 in all configurations (development and production). On the production server, an `iptables` entry forwards port 80 to port 1337.  For more details on this, see this Stack Overflow post http://stackoverflow.com/a/16573737/1798556
+* To view logs, SSH into the server and type `forever list.` This will display the currently running node application(s) along with their corresponding log files, which you can `cat`, `tail`, etc. as needed
+* The server is configured to automatically start the Clicker node app with `forever` on startup via a cron task.
+
+## Deploying to Production
+
+The server has a git remote set up with a `post-receive` script that automatically runs `npm-install` and `forever restartall`, so all you need to do is push to this remote, and the server will update itself and restart automatically.
+
+To add this git remote, enter `git remote add prod csci477@fontify.usc.edu/home/csci477/clicker-node.git` from your local copy of the repository. 
+
+When you are ready to deploy to production, ensure that the database configurations in `config/env` are correct, and then run `git push prod`. For login credentials, contact the instructor.
+
+# API
 
 Base url: `http://fontify.usc.edu`
 
