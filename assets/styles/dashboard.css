@@ -18,6 +18,10 @@
   padding-right: 10px;
 }
 
+.report-title {
+  text-align: center;
+}
+
 .graph {
   width: 310;
   height: 240;

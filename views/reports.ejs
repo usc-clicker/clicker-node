@@ -11,9 +11,16 @@ $(document).ready(function () {
       var students = [];
       var sectionHtml = '';
       async.each(section.students, function iterator(student_id, studentCallback) {
-        io.socket.get('/auth/' + student_id, function (student) {
-          students.push(student.email);
-          studentCallback();
+        io.socket.get('/auth/' + student_id, function (auth) {
+          console.log(auth);
+          var statsUrl = '/user/stats?user=' + auth.email + '&section_id=' + section.section_id;
+          console.log(statsUrl);
+          io.socket.get(statsUrl, function (scores) {
+            console.log(scores);
+            auth.scores = scores;
+            students.push(auth);
+            studentCallback();
+          });
         });
       }, function done(err) {
         if (students.length > 0 && section.quizzes && section.quizzes.length > 0) {
@@ -24,6 +31,22 @@ $(document).ready(function () {
                 console.log(graphs);
                 if (graphs.length > 0) {
                   quiz.graphs = graphs;
+                  quiz.instructor = section.instructor;
+                  scoreEntries = [];
+                  students.forEach(function (student) {
+                    if (student.scores) {
+                      student.scores.forEach(function (score) {
+                        if (score.quiz_id == quiz_id) {
+                          scoreEntry = {};
+                          scoreEntry.email = student.email;
+                          scoreEntry.usc_id = student.user.usc_id;
+                          scoreEntry.score = score.score.toFixed(2) + "%";
+                          scoreEntries.push(scoreEntry);
+                        }
+                      });
+                    }
+                  });
+                  quiz.scoreEntries = scoreEntries;
                   var reportHtml = reportTemplate(quiz);
                   $("#reports").append(reportHtml);
                 }
@@ -40,17 +63,40 @@ $(document).ready(function () {
 </script>
 
 <script type="text/x-handlebars" id="report-template">
-      <div class="mdl-card__title">
-          {{quiz_name}}
-          <br><br>
-          Section {{section_id}}
-      </div>
-      <div class="mdl-card__supporting-text">
-        {{#each graphs}}
-        <img class="graph" src={{this.graphUrl}} />
-        <br><br>
-        {{/each}}
-      </div>
+
+<div class="report-title mdl-cell mdl-cell--12-col">
+  <p><h3>{{quiz_name}}</h3></p>
+  <p>Section {{section_id}}<br>{{instructor}}</p>
+</div>  
+<div class="mdl-grid">
+  <div class="mdl-cell mdl-cell--8-col">
+    {{#each graphs}}
+    <img class="graph" src={{this.graphUrl}} />
+    <br><br>
+    {{/each}}
+  </div>
+  <div class="mdl-cell mdl-cell--4-col">
+    <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
+      <thead>
+        <tr>
+          <th class="mdl-data-table__cell--non-numeric">Student Email</th>
+          <th>USC ID</th>
+          <th>Score on Quiz</th>
+        </tr>
+      </thead>
+      <tbody>
+      {{#each scoreEntries}}
+        <tr>
+          <td class="mdl-data-table__cell--non-numeric">{{email}}</td>
+          <td>{{usc_id}}</td>
+          <td>{{score}}</td>
+        </tr>
+      {{/each}}
+      <tbody>
+    </table>
+  </div>
+</div>
+
 </script>
 
 <body>

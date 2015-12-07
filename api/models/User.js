@@ -164,6 +164,7 @@ module.exports = {
                     if (foundQuiz && (!section_id || foundQuiz.section_id == section_id)) {
                       var quizResult = {};
                       quizResult.quiz_name = foundQuiz.quiz_name;
+                      quizResult.quiz_id = foundQuiz.id;
                       var numCorrect = 0.0;
                       async.each(foundAnswerSet.answers, function iterator(answer_id, answerCallback) {
                         Answer.findOne({id: answer_id}).exec(function findCB(answerErr, foundAnswer) {
