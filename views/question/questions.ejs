@@ -1,0 +1,54 @@
+<script>
+
+function deleteQuestion(id) {
+  io.socket.delete('/question/' + id, function (res) {
+    window.location.reload(true);
+  });
+  return true;
+};
+
+$(document).ready(function () {
+	$("#title").text("Questions");
+
+	var questionTemplate = Handlebars.compile($("#question-template").html());
+
+	io.socket.get('/question/', function (questions) {
+		questionHtml = '';
+		questions.forEach(function (question) {
+			questionHtml += questionTemplate(question);
+		});
+		$("#questions").html(questionHtml);
+	});
+
+});
+
+</script>
+
+<script type="text/x-handlebars" id="question-template">
+  <div class="mdl-cell mdl-cell--4-col">
+    <div class="mdl-card mdl-shadow--2dp">
+      <div class="mdl-card__title">
+        <b class="id">{{id}}</b> {{question}}
+      </div>
+      <div class="mdl-card__supporting-text">
+        <ul>
+          {{#each choices}}
+          <li>{{this}}</li>
+          {{/each}}
+        </ul>
+      </div>
+      <div class="mdl-card__actions mdl-card--border">
+        <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Edit</a>
+        <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onclick="return deleteQuestion({{id}});">Delete</a>
+      </div>
+    </div>
+  </div>
+</script>
+
+<body>
+<div class="mdl-grid" id="questions"></div>
+<a href="/question/create"><button class="clicker-fab mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
+          <i class="material-icons">add</i>
+        </button></a>
+</body>
+

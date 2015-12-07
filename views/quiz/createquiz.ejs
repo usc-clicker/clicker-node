@@ -1,0 +1,61 @@
+<script>
+
+$(document).ready(function () {
+  $("#title").text("Create Quiz");
+
+  var selectDiv = $('<div class="mdl-selectfield mdl-js-selectfield">');
+  var select = $('<select id="section_selection" name="section_selection" class="mdl-selectfield__select">');
+  var selectLabel = $('<label class="mdl-selectfield__label" for="section_selection">Choose Section</label>');
+  select.append($("<option>").attr('value', ""));
+
+  io.socket.get('/section/', function (sections) {
+    sections.forEach(function (section) {
+      if (section.students && section.students.length > 0) {
+        console.log("valid section");
+        var label = section.section_id  + " - " + section.instructor + " - " + section.course_id;
+        select.append($("<option>").attr('value', section.id).text(label));
+      }
+    });
+    selectDiv.append(select);
+    selectDiv.append(selectLabel);
+    $("form").prepend(selectDiv);
+    componentHandler.upgradeAllRegistered();
+  });
+
+  $("#submit").click(function() {
+    console.log("save quiz");
+
+    var quiz = {};
+    quiz.quiz_name = $("#quiz_name").val();
+    quiz.section_id = $("#section_selection").val();
+
+    io.socket.post('/quiz', quiz, function (data, res) {
+      console.log(data);
+      console.log(res);
+      if (res.statusCode == 201) {
+        window.location = '/quizzes';
+      } else {
+        console.log("error creating quiz");
+      }
+    });
+
+    return false;
+  });
+
+});
+
+</script>
+
+<body>
+  <form>
+    <br>
+    <div class="mdl-textfield mdl-js-textfield">
+      <input class="mdl-textfield__input" type="text" id="quiz_name">
+      <label class="mdl-textfield__label" for="quiz_name">Quiz Name</label>
+    </div>
+    <br>
+    <button id="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+      Submit
+    </button>
+  </form>
+</body>

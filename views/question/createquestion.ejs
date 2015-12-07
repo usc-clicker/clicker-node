@@ -1,0 +1,110 @@
+<script>
+
+$(document).ready(function () {
+  $("#title").text("Create Question");
+
+  var choiceTemplate = Handlebars.compile($("#choice-template").html());
+
+  var selectDiv = $('<div class="mdl-selectfield mdl-js-selectfield">');
+  var select = $('<select id="quiz_selection" name="quiz_selection" class="mdl-selectfield__select">');
+  var selectLabel = $('<label class="mdl-selectfield__label" for="quiz_selection">Choose Quiz</label>');
+  select.append($("<option>").attr('value', ""));
+
+  io.socket.get('/quiz/', function (quizzes) {
+    quizzes.forEach(function (quiz) {
+      console.log(quiz);
+      select.append($("<option>").attr('value', quiz.id).text(quiz.quiz_name));
+    });
+    selectDiv.append(select);
+    selectDiv.append(selectLabel);
+    $("form").prepend(selectDiv);
+    componentHandler.upgradeAllRegistered();
+  });
+
+  $("#submit").click(function() {
+    console.log("save question");
+    var choices = [];
+
+    $('.choice-input').each(function(i, choice) {
+        choices.push($(choice).val());
+    });
+
+    var question = {};
+    question.question = $("#question").val();
+    question.choices = choices;
+    question.time_limit = 1000*parseInt($("#time_limit").val());
+    question.type="multiple-choice";
+    question.answer = $("#correct_answer").val();
+    question.quiz_id = $("#quiz_selection").val();
+
+    io.socket.post('/question', question, function (data, res) {
+      if (res.statusCode == 201) {
+        var addBody = {};
+        addBody.quiz_id = question.quiz_id;
+        addBody.question_id = data.id;
+        io.socket.post('/quiz/add', addBody, function (addData, addRes) {
+          if (addRes.statusCode == 200) {
+            console.log("success");
+            window.location = '/questions';
+          } else {
+            console.log("error adding question to quiz");
+          }
+        });
+      } else {
+        console.log("error creating question");
+      }
+    });
+
+    return false;
+  });
+
+  function addChoice() {
+    $("#choices").append(choiceTemplate());
+    componentHandler.upgradeAllRegistered();
+  };
+  addChoice();
+
+  $("#addChoice").click(function() {
+    addChoice();
+    return false;
+  });
+});
+
+</script>
+
+<script type="text/x-handlebars" id="choice-template">
+   <div class="mdl-textfield mdl-js-textfield">
+    <input class="choice-input mdl-textfield__input" type="text" class="choice">
+    <label class="mdl-textfield__label" for="choice">Enter Choice...</label>
+  </div>
+  <br>
+</script>
+
+<body>
+  <form>
+    <br>
+    <div class="mdl-textfield mdl-js-textfield">
+      <input class="mdl-textfield__input" type="text" id="question">
+      <label class="mdl-textfield__label" for="question">Question</label>
+    </div>
+    <br>
+    <div id="choices"></div>
+    <button id="addChoice" class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored">
+      <i class="material-icons">add</i>
+    </button>
+    <br>
+    <div class="mdl-textfield mdl-js-textfield">
+      <input class="mdl-textfield__input" type="text" id="correct_answer">
+      <label class="mdl-textfield__label" for="correct_answer">Correct Answer</label>
+    </div>
+    <br>
+    <div class="mdl-textfield mdl-js-textfield">
+      <input class="mdl-textfield__input" type="number" id="time_limit">
+      <label class="mdl-textfield__label" for="time_limit">Time Limit (Seconds)</label>
+    </div>
+    <br>
+    <button id="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
+      Submit
+    </button>
+  </form>
+</body>

@@ -1,0 +1,63 @@
+<script>
+
+function deleteQuiz(id) {
+	io.socket.delete('/quiz/' + id, function (res) {
+		window.location.reload(true);
+	});
+	return true;
+};
+
+$(document).ready(function () {
+	$("#title").text("Quizzes");
+
+	var quizTemplate = Handlebars.compile($("#quiz-template").html());
+
+	io.socket.get('/quiz/', function (quizzes) {
+		$("#quizzes").empty();
+		quizzes.forEach(function (quiz) {
+			var questions = [];
+			var quizHtml = '';
+			async.each(quiz.questionSet, function iterator(question_id, questionCallback) {
+				io.socket.get('/question/' + question_id, function (question) {
+					questions.push(question.question);
+					questionCallback();
+				});
+			}, function done(err) {
+				quiz.questions = questions;
+				quizHtml += quizTemplate(quiz);
+				$("#quizzes").append(quizHtml);
+			});
+		});
+	});
+
+});
+
+</script>
+
+<script type="text/x-handlebars" id="quiz-template">
+  <div class="mdl-cell mdl-cell--4-col">
+    <div class="mdl-card mdl-shadow--2dp">
+      <div class="mdl-card__title">
+        <b class="id">{{id}}</b> {{quiz_name}}
+      </div>
+      <div class="mdl-card__supporting-text">
+        <ul>
+          {{#each questions}}
+          <li>{{this}}</li>
+          {{/each}}
+        </ul>
+      </div>
+      <div class="mdl-card__actions mdl-card--border">
+        <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">Edit</a>
+        <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" onclick="return deleteQuiz({{id}});">Delete</a>
+      </div>
+    </div>
+  </div>
+</script>
+
+<body>
+<div class="mdl-grid" id="quizzes"></div>
+<a href="/quiz/create"><button class="clicker-fab mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
+          <i class="material-icons">add</i>
+        </button></a>
+</body>

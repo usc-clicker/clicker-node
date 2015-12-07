@@ -1,100 +1,84 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Clicker</title>
+<head>
+  <title>Clicker</title>
 
-    <!-- Viewport mobile tag for sensible mobile support -->
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- Viewport mobile tag for sensible mobile support -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-    
-    <!--  
-        Stylesheets and Preprocessors
-        ==============================
+  <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.red-amber.min.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <!--STYLES-->
+  <link rel="stylesheet" href="/styles/dashboard.css">
+  <link rel="stylesheet" href="/styles/importer.css">
+  <link rel="stylesheet" href="/styles/mdl-selectfield.min.css">
+  <!--STYLES END-->
+  <script src="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.2/handlebars.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/async/1.5.0/async.min.js"></script>
+  <!--SCRIPTS-->
+  <script src="/js/dependencies/sails.io.js"></script>
+  <script src="/js/dependencies/mdl-selectfield.min.js"></script>
+  <!--SCRIPTS END-->
+</head>
 
-        You can always bring in CSS files manually with `<link>` tags, or asynchronously
-        using a solution like AMD (RequireJS).  Or, if you like, you can take advantage 
-        of Sails' conventional asset pipeline (boilerplate Gruntfile).
+<body>
 
-        By default, stylesheets from your `assets/styles` folder are included
-        here automatically (between STYLES and STYLES END). Both CSS (.css) and LESS (.less)
-        are supported. In production, your styles will be minified and concatenated into
-        a single file.
-        
-        To customize any part of the built-in behavior, just edit `tasks/pipeline.js`.
-        For example, here are a few things you could do:
-            
-            + Change the order of your CSS files
-            + Import stylesheets from other directories
-            + Use a different or additional preprocessor, like SASS, SCSS or Stylus
-    -->
+<div class="clicker-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+  <header class="clicker-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
+    <div class="mdl-layout__header-row">
+      <span class="mdl-layout-title" id="title">Home</span>
+      <div class="mdl-layout-spacer"></div>
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable">
+        <label class="mdl-button mdl-js-button mdl-button--icon" for="search">
+          <i class="material-icons">search</i>
+        </label>
+        <div class="mdl-textfield__expandable-holder">
+          <input class="mdl-textfield__input" type="text" id="search">
+          <label class="mdl-textfield__label" for="search">Enter your query...</label>
+        </div>
+      </div>
+      <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="hdrbtn">
+        <i class="material-icons">more_vert</i>
+      </button>
+      <ul class="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" for="hdrbtn">
+        <li class="mdl-menu__item">About</li>
+        <li class="mdl-menu__item">Contact</li>
+        <li class="mdl-menu__item">Legal information</li>
+      </ul>
+    </div>
+  </header>
+  <div class="clicker-drawer mdl-layout__drawer mdl-color--red-900 mdl-color-text--blue-grey-50">
+    <header class="clicker-drawer-header">
+      <img src="http://qca.st/images/team/david.jpg" class="clicker-avatar"/>
+      <div class="clicker-avatar-dropdown">
+        <span>davidmca@usc.edu</span>
+        <div class="mdl-layout-spacer"></div>
+        <button id="accbtn" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+          <i class="material-icons" role="presentation">arrow_drop_down</i>
+          <span class="visuallyhidden">Accounts</span>
+        </button>
+      </div>
+    </header>
+    <nav class="clicker-navigation mdl-navigation mdl-color--red-700">
+      <a class="mdl-navigation__link" href="/quizzes">
+        <i class="mdl-color-text--yellow-700 material-icons" role="presentation">list</i>Quizzes</a>
+      <a class="mdl-navigation__link" href="/questions">
+        <i class="mdl-color-text--yellow-700 material-icons" role="presentation">help</i>Questions</a>
+      <a class="mdl-navigation__link" href="/sections">
+        <i class="mdl-color-text--yellow-700 material-icons" role="presentation">class</i>Sections</a>
+      <a class="mdl-navigation__link" href="/reports">
+        <i class="mdl-color-text--yellow-700 material-icons" role="presentation">insert_chart</i>Reports</a>
+    </nav>
+  </div>
+  <main class="mdl-layout__content mdl-color--grey-100">
+    <div class="mdl-grid clicker-content">
+        <%- body %>
+    </div>
+  </main>
+</div>
 
-    <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.red-amber.min.css" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <!--STYLES-->
-    <link rel="stylesheet" href="/styles/dashboard.css">
-    <link rel="stylesheet" href="/styles/importer.css">
-    <!--STYLES END-->
-    <script src="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.2/handlebars.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/async/1.5.0/async.min.js"></script>
-    <!--SCRIPTS-->
-    <script src="/js/dependencies/sails.io.js"></script>
-    <!--SCRIPTS END-->
-  </head>
+</body>
 
-  <body>
-    <%- body %>
-
-
-
-    <!--
-        Client-side Templates
-        ========================
-
-        HTML templates are important prerequisites of modern, rich client applications.
-        To work their magic, frameworks like Backbone, Angular, Ember, and Knockout require
-        that you load these templates client-side.
-
-        By default, your Gruntfile is configured to automatically load and precompile
-        client-side JST templates in your `assets/templates` folder, then
-        include them here automatically (between TEMPLATES and TEMPLATES END).
-        
-        To customize this behavior to fit your needs, just edit `tasks/pipeline.js`.
-        For example, here are a few things you could do:
-
-            + Import templates from other directories
-            + Use a different template engine (handlebars, jade, dust, etc.)
-            + Internationalize your client-side templates using a server-side
-              stringfile before they're served.
-    -->
-
-    <!--TEMPLATES-->
-    
-    <!--TEMPLATES END-->
-
-
-    <!--
-
-      Client-side Javascript
-      ========================
-
-      You can always bring in JS files manually with `script` tags, or asynchronously
-      on the client using a solution like AMD (RequireJS).  Or, if you like, you can 
-      take advantage of Sails' conventional asset pipeline (boilerplate Gruntfile).
-
-      By default, files in your `assets/js` folder are included here
-      automatically (between SCRIPTS and SCRIPTS END).  Both JavaScript (.js) and
-      CoffeeScript (.coffee) are supported. In production, your scripts will be minified
-      and concatenated into a single file.
-      
-      To customize any part of the built-in behavior, just edit `tasks/pipeline.js`.
-      For example, here are a few things you could do:
-          
-          + Change the order of your scripts
-          + Import scripts from other directories
-          + Use a different preprocessor, like TypeScript
-
-    -->
-  </body>
 </html>

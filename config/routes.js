@@ -33,11 +33,31 @@ module.exports.routes = {
   ***************************************************************************/
 
   '/': {
-    view: 'homepage'
+    view: 'quiz/quizzes'
+  },
+
+  '/quizzes': {
+    view: 'quiz/quizzes'
+  },
+
+  '/quiz/create': {
+    view: 'quiz/createquiz'
+  },
+
+  '/questions': {
+    view: 'question/questions'
   },
 
   '/question/create': {
-    view: 'newquestion'
+    view: 'question/createquestion'
+  },
+
+  '/sections': {
+    view: 'sections'
+  },
+
+  '/reports': {
+    view: 'reports'
   },
 
   '/importClasses': 'ClassController.import',

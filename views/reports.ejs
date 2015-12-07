@@ -1,0 +1,58 @@
+<script>
+
+$(document).ready(function () {
+
+	$("#title").text("Reports");
+
+	var reportTemplate = Handlebars.compile($("#report-template").html());
+
+  io.socket.get('/section/', function (sections) {
+    sections.forEach(function (section) {
+      var students = [];
+      var sectionHtml = '';
+      async.each(section.students, function iterator(student_id, studentCallback) {
+        io.socket.get('/auth/' + student_id, function (student) {
+          students.push(student.email);
+          studentCallback();
+        });
+      }, function done(err) {
+        if (students.length > 0 && section.quizzes && section.quizzes.length > 0) {
+          section.quizzes.forEach(function (quiz_id) {
+            io.socket.get('/quiz/' + quiz_id, function (quiz) {
+              console.log(quiz);
+              io.socket.get('/section/graphQuiz?section_id='+section.section_id+'&quiz_id='+quiz.id, function (graphs) {
+                console.log(graphs);
+                if (graphs.length > 0) {
+                  quiz.graphs = graphs;
+                  var reportHtml = reportTemplate(quiz);
+                  $("#reports").append(reportHtml);
+                }
+              });
+            });
+          });
+        }
+      });
+    });
+  });
+
+});
+
+</script>
+
+<script type="text/x-handlebars" id="report-template">
+      <div class="mdl-card__title">
+          {{quiz_name}}
+          <br><br>
+          Section {{section_id}}
+      </div>
+      <div class="mdl-card__supporting-text">
+        {{#each graphs}}
+        <img class="graph" src={{this.graphUrl}} />
+        <br><br>
+        {{/each}}
+      </div>
+</script>
+
+<body>
+<div class="mdl-grid" id="reports"></div>
+</body>
